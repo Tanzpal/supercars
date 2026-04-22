@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cars-Bay</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/SportsCar.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <a href="#" class="logo">Cars-Bay</a>
+      <ul class="navbar">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('show_login') }}">Login</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('contactUs') }}">Contact & Support</a></li>
+        <li><a href="{{ url_for('dashboard') }}">Profile</a></li>
+      </ul>
+    </header>
+
+    <section class="HeroSection">
+      <div class="container">
+        <!-- Search section -->
+        <div class="search-section">
+          <input type="text" id="searchInput" placeholder=" Search cars..." />
+        </div>
+
+        <!--Car  cards -->
+        <!-- <div id="blogContainer">
+          <div class="blog-card" data-id="1">
+            <img
+              src="{{ url_for('static', filename='photos/aprillia.jpg') }}"
+              alt=""
+            />
+            <div class="blog-content">
+              <h3><a href="{{ url_for('home') }}">Aprillia RSV4</a></h3>
+              <div class="blog-meta">Aprillia | 01 Jan 2023 - 25</div>
+              <i>Engine 1099cc, HorsePower 220hp, Max Speed 305kmph</i> <br />
+              <i>Registration year: 2023, Number of Owners: 1</i>
+              <p>
+                <b>
+                  If you want to push it to the max, make sure you have the
+                  right gear.
+                </b>
+              </p>
+            </div>
+
+            Heart Icon
+            <div class="like-btn">
+              <i class="heart-icon" id="heart-1">&#9825;</i>
+            </div>
+          </div>
+        </div> -->
+      </div>
+    </section>
+
+    <section class="Contact" id="contact">
+      <div class="footer">
+        <div class="Main">
+          <div class="list">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="{{ url_for('about') }}">About Us</a></li>
+              <li><a href="{{ url_for('contactUs') }}">Contact Us</a></li>
+              <li>
+                <a href="{{ url_for('sell_car_page') }}">
+                  Sell Your Motorcycle
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="list">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="">carsbay@gmail.com</a></li>
+              <li><a href="">+91 7774831000</a></li>
+            </ul>
+          </div>
+
+          <div class="list">
+            <h4>Contact Info</h4>
+            <ul>
+              <li><a href="">Dighi, Parande Nagar</a></li>
+              <li><a href="">18.6166° N, 73.8724° E</a></li>
+            </ul>
+          </div>
+
+          <div class="list">
+            <h4>Connect</h4>
+            <div class="social">
+              <a href="https://www.instagram.com/carsbay_01" target="_blank">
+                <i class="bx bxl-instagram"></i>
+              </a>
+
+              <a href="mailto:carsbay@gmail.com">
+                <i class="bx bxl-gmail"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/Sportscar.js') }}"></script>
+  </body>
+</html>

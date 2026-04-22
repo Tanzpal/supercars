@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/admin.css') }}"
+    />
+    <style>
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h2>Cars-Bay Admin Panel</h2>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </header>
+
+    <div class="admin-container">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <ul>
+          <li>
+            <a href="#" onclick="showSection('appointments')">Appointments</a>
+          </li>
+          <li><a href="#" onclick="showSection('support')">Support</a></li>
+          <li><a href="#" onclick="showSection('sellers')">Sellers</a></li>
+        </ul>
+      </aside>
+
+      <!-- MAIN AREA -->
+      <section class="main--container">
+        <!-- =====================
+          APPOINTMENTS
+    ====================== -->
+        <div id="appointments" class="section active">
+          <h2>All Appointments</h2>
+
+          {% if appointments %}
+          <table border="1" cellpadding="10">
+            <tr>
+              <th>User Email</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Vehicle</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Area</th>
+              <th>City</th>
+            </tr>
+
+            {% for appt in appointments %}
+            <tr>
+              <td>{{ appt.user_email }}</td>
+              <td>{{ appt.name }}</td>
+              <td>{{ appt.phone }}</td>
+              <td>{{ appt.vehicle }}</td>
+              <td>{{ appt.date }}</td>
+              <td>{{ appt.time }}</td>
+              <td>{{ appt.area }}</td>
+              <td>{{ appt.city }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <p>No appointments found.</p>
+          {% endif %}
+        </div>
+
+        <!-- =====================
+          SUPPORT MESSAGES
+    ====================== -->
+        <div id="support" class="section">
+          <h2>Support Messages</h2>
+
+          {% if messages %}
+          <table border="1" cellpadding="10">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Message</th>
+              <th>Date</th>
+            </tr>
+
+            {% for msg in messages %}
+            <tr>
+              <td>{{ msg.id }}</td>
+              <td>{{ msg.name }}</td>
+              <td>{{ msg.email }}</td>
+              <td>{{ msg.phone }}</td>
+              <td>{{ msg.query }}</td>
+              <td>{{ msg.created_at }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <p>No messages found.</p>
+          {% endif %}
+        </div>
+
+        <!-- =====================
+          SELLER CARS
+    ====================== -->
+        <div id="sellers" class="section">
+          <h2>Seller Listed Cars</h2>
+
+          {% if cars %}
+          <table border="1" cellpadding="10">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Chassis No.</th>
+              <th>Plate No.</th>
+              <th>Years Used</th>
+              <th>Owners</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+
+            {% for car in cars %}
+            <tr>
+              <td>{{ car.id }}</td>
+              <td>{{ car.name }}</td>
+              <td>{{ car.email }}</td>
+              <td>{{ car.phone }}</td>
+              <td>{{ car.address }}</td>
+              <td>{{ car.chassis }}</td>
+              <td>{{ car.plate }}</td>
+              <td>{{ car.years_used }}</td>
+              <td>{{ car.owners }}</td>
+              <td>{{ car.created_at }}</td>
+
+              <td>
+                {% if car.is_verified == 1 %}
+                <!-- Verified Badge -->
+                <span
+                  style="
+                    background: gray;
+                    color: white;
+                    padding: 6px 12px;
+                    border-radius: 5px;
+                  "
+                >
+                  Verified
+                </span>
+                {% else %}
+                <!-- Verify Button -->
+                <a
+                  href="{{ url_for('verify_car', car_id=car.id) }}"
+                  style="
+                    background: green;
+                    color: white;
+                    padding: 6px 12px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                  "
+                  onclick="
+                    return confirm(
+                      'Are you sure you want to verify this seller?',
+                    );
+                  "
+                >
+                  Verify
+                </a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <p>No cars found.</p>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+
+    <script>
+      function showSection(sectionId) {
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById(sectionId).classList.add("active");
+      }
+    </script>
+  </body>
+</html>

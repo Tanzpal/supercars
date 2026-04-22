@@ -1,0 +1,207 @@
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sell Your Car | Cars-Bay</title>
+
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/ResaleForm.css') }}"
+    />
+  </head>
+
+  <body>
+    <div class="formbold-main-wrapper">
+      <div class="formbold-form-wrapper">
+        <!-- Preview Image -->
+        <img
+          src="{{ url_for('static', filename='photos/your-image.jpg') }}"
+          class="formbold-img"
+          id="previewImage"
+        />
+
+        <!-- Form Start -->
+        <form
+          action="{{ url_for('add_car') }}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="formbold-form-title">
+            <h2>Sell Your Car</h2>
+            <p>Fill the details to list your car on Cars-Bay.</p>
+          </div>
+
+          <!-- Owner Info -->
+          <div class="formbold-input-flex">
+            <div>
+              <label class="formbold-form-label">First Name</label>
+              <input
+                type="text"
+                name="firstname"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+            <div>
+              <label class="formbold-form-label">Last Name</label>
+              <input
+                type="text"
+                name="lastname"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="formbold-input-flex">
+            <div>
+              <label class="formbold-form-label">Email</label>
+              <input
+                type="email"
+                name="email"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+            <div>
+              <label class="formbold-form-label">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Car Details -->
+          <div class="formbold-mb-3">
+            <label class="formbold-form-label">Car Name</label>
+            <input
+              type="text"
+              name="carName"
+              class="formbold-form-input"
+              required
+            />
+          </div>
+
+          <div class="formbold-input-flex">
+            <div>
+              <label class="formbold-form-label">Brand</label>
+              <input
+                type="text"
+                name="brand"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+            <div>
+              <label class="formbold-form-label">Engine (cc)</label>
+              <input
+                type="number"
+                name="cc"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="formbold-input-flex">
+            <div>
+              <label class="formbold-form-label">Horsepower (hp)</label>
+              <input
+                type="number"
+                name="hp"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+            <div>
+              <label class="formbold-form-label">Max Speed (kmph)</label>
+              <input
+                type="number"
+                name="speed"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="formbold-input-flex">
+            <div>
+              <label class="formbold-form-label">Registration Year</label>
+              <input
+                type="number"
+                name="year"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+            <div>
+              <label class="formbold-form-label">Number of Owners</label>
+              <input
+                type="number"
+                name="owners"
+                class="formbold-form-input"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div class="formbold-mb-3">
+            <label class="formbold-form-label">Expected Price (₹)</label>
+            <input
+              type="number"
+              name="price"
+              class="formbold-form-input"
+              required
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="formbold-mb-3">
+            <label class="formbold-form-label">Description</label>
+            <textarea
+              name="description"
+              class="formbold-form-input"
+              rows="4"
+              required
+            ></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="formbold-mb-3">
+            <label class="formbold-form-label">Upload Car Image</label>
+            <input
+              type="file"
+              name="image"
+              id="imageInput"
+              class="formbold-form-input"
+              accept="image/*"
+              required
+            />
+          </div>
+
+          <!-- Terms -->
+          <div class="formbold-checkbox-wrapper">
+            <label class="formbold-checkbox-label">
+              <input type="checkbox" required />
+              I agree to the terms and conditions
+            </label>
+          </div>
+
+          <!-- Submit -->
+          <button class="formbold-btn">Post Car</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='js/ResaleForm.js') }}"></script>
+  </body>
+</html>
+```

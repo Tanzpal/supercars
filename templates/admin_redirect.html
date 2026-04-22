@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script>
+      // Open admin dashboard in a NEW TAB
+      window.open("{{ url_for('admin_dashboard') }}", "_blank");
+
+      // Redirect the current tab to user login or home page
+      window.location.href = "{{ url_for('show_login') }}";
+    </script>
+
+    <p>Redirecting...</p>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cars-Bay - User Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}"
+    />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <header>
+      <a href="#" class="logo">Cars-Bay</a>
+      <ul class="navbar">
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+        <li><a href="{{ url_for('about') }}">About</a></li>
+        <li><a href="{{ url_for('contactUs') }}">Contact & Support</a></li>
+      </ul>
+    </header>
+
+    <!-- Main Container -->
+    <section class="main--container">
+      <div class="dashboard-container">
+        <!-- Dashboard Topbar -->
+        <div class="dashboard-topbar">
+          <span class="user-greeting">Hello, {{ session['username'] }}</span>
+          <a href="{{ url_for('logout') }}" class="logout-btn">
+            <i class="bx bx-log-out"></i> Logout
+          </a>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <h2>Cars-Bay <br />User</h2>
+          <p class="username">{{ session['username'] }}</p>
+          <ul class="sidebar-menu">
+            <li class="active" data-target="wishlist-section">
+              <i class="bx bx-heart"></i> Wishlist
+            </li>
+            <li data-target="appointments-section">
+              <i class="bx bx-calendar"></i> Appointments
+            </li>
+            <li>
+              <a href="{{ url_for('logout') }}" class="logout-link">
+                <i class="bx bx-log-out"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Wishlist Section -->
+        <div class="wishlist-container section" id="wishlist-section">
+          <h2>My Wishlist</h2>
+          {% if wishlist %}
+          <div class="wishlist-grid">
+            {% for car in wishlist %}
+            <div class="wishlist-card" data-id="{{ car.id }}">
+              <img src="{{ car.car_image }}" alt="{{ car.car_name }}" />
+              <h3>{{ car.car_name }}</h3>
+              <i class="bx bx-trash remove-car" data-id="{{ car.id }}"></i>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p>
+            You have no cars in your wishlist. Click the heart icon to add some!
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Appointments Section -->
+        <!-- Appointments Section -->
+        <div
+          class="appointments-container section"
+          id="appointments-section"
+          style="display: none"
+        >
+          <h2 class="appointments-title">My Appointments</h2>
+
+          {% if appointments %}
+          <div class="appointments-grid">
+            {% for appt in appointments %}
+            <div class="appointment-card" data-id="{{ appt.id }}">
+              <div class="appointment-header">
+                <h3 class="vehicle-name">{{ appt.vehicle }}</h3>
+                <button
+                  class="cancel-btn"
+                  data-id="{{ appt.id }}"
+                  title="Cancel Appointment"
+                >
+                  <i class="bx bx-trash"></i>
+                </button>
+              </div>
+              <div class="appointment-details">
+                <p><strong>Date:</strong> {{ appt.date }}</p>
+                <p><strong>Time:</strong> {{ appt.time }}</p>
+                <p>
+                  <strong>Address:</strong> {{ appt.area }}, {{ appt.city }}
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="app-txt">You have not booked any appointments yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

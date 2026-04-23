@@ -24,14 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // -------------------
-  // Search Cars
+  // Search by Name + Type
   // -------------------
   if (searchInput) {
     searchInput.addEventListener("keyup", () => {
       const query = searchInput.value.toLowerCase();
+
       blogCards.forEach((card) => {
-        const textContent = card.textContent.toLowerCase();
-        if (textContent.includes(query)) {
+        const name = card.querySelector("h3 a").textContent.toLowerCase();
+        const type = card.dataset.type.toLowerCase();
+
+        if (name.includes(query) || type.includes(query)) {
           card.style.display = "block";
         } else {
           card.style.display = "none";
@@ -57,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (heart.classList.contains("liked")) {
         heart.innerHTML = "&#10084;";
 
-        // ADD
         fetch("/add_to_wishlist", {
           method: "POST",
           headers: {
@@ -80,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         heart.innerHTML = "&#9825;";
 
-        // REMOVE
         fetch("/remove_from_wishlist_by_name", {
           method: "POST",
           headers: {
@@ -100,4 +101,39 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+});
+
+// -------------------
+// DELETE CAR
+// -------------------
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("delete-btn")) {
+    const carId = e.target.dataset.id;
+    const card = e.target.closest(".blog-card");
+
+    if (!confirm("Are you sure you want to delete this car?")) return;
+
+    try {
+      const res = await fetch(`/delete_car/${carId}`, {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (data.status === "success") {
+        // remove card smoothly
+        card.style.transition = "opacity 0.3s";
+        card.style.opacity = "0";
+
+        setTimeout(() => {
+          card.remove();
+        }, 300);
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error deleting car");
+    }
+  }
 });

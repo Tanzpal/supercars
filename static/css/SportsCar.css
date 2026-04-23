@@ -151,7 +151,9 @@ header.sticky {
   font-size: 28px;
   color: #bbb;
   cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
 }
 
 .heart-icon.liked {
@@ -311,4 +313,14 @@ header.sticky {
 .social a i {
   color: white;
   font-size: 24px;
+}
+
+.delete-btn {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 30px;
+  color: white;
+  background-color: red;
+  border: none;
 }

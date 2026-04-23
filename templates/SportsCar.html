@@ -25,34 +25,54 @@
       <div class="container">
         <!-- Search section -->
         <div class="search-section">
-          <input type="text" id="searchInput" placeholder=" Search cars..." />
+          <input
+            type="text"
+            id="searchInput"
+            placeholder=" Search cars or type (e.g. sports, suv)..."
+          />
         </div>
 
-        <!--Car  cards -->
+        <!-- Car cards -->
         <div id="blogContainer">
-          <div class="blog-card" data-id="1">
-            <img
-              src="{{ url_for('static', filename='photos/aprillia.jpg') }}"
-              alt=""
-            />
+          {% for car in cars %}
+          <div
+            class="blog-card"
+            data-id="{{ car.id }}"
+            data-type="{{ car.car_type | lower }}"
+          >
+            <img src="/{{ car.image }}" alt="Car Image" />
+
             <div class="blog-content">
-              <h3><a href="{{ url_for('home') }}">Aprillia RSV4</a></h3>
-              <div class="blog-meta">Aprillia | 01 Jan 2023 - 25</div>
-              <i>Engine 1099cc, HorsePower 220hp, Max Speed 305kmph</i> <br />
-              <i>Registration year: 2023, Number of Owners: 1</i>
-              <p>
-                <b>
-                  If you want to push it to the max, make sure you have the
-                  right gear.
-                </b>
-              </p>
+              <h3><a href="#">{{ car.car_name }}</a></h3>
+
+              <div class="blog-meta">{{ car.brand }} | {{ car.year }}</div>
+
+              <i>
+                Engine {{ car.cc }}cc, HorsePower {{ car.hp }}hp, Max Speed {{
+                car.speed }}kmph
+              </i>
+              <br />
+
+              <i>
+                Registration year: {{ car.year }}, Number of Owners: {{
+                car.owners }}
+              </i>
+
+              <p><b>{{ car.description }}</b></p>
+              <p><b>₹ {{ car.price }}</b></p>
             </div>
 
-            <!-- Heart Icon -->
+            <!-- ❤️ Wishlist -->
             <div class="like-btn">
-              <i class="heart-icon" id="heart-1">&#9825;</i>
+              <i class="heart-icon">&#9825;</i>
             </div>
+
+            <!-- ✅ NEW: DELETE BUTTON (ONLY OWNER) -->
+            {% if session['email'] == car.email %}
+            <button class="delete-btn" data-id="{{ car.id }}">Delete</button>
+            {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
     </section>

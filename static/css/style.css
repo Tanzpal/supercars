@@ -158,7 +158,9 @@ header.sticky {
   height: 100%;
   object-fit: cover;
   opacity: 0.6;
-  transition: opacity 0.5s, transform 0.5s;
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
 }
 
 .explore-card:hover img {
@@ -169,7 +171,12 @@ header.sticky {
 .explore-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -182,7 +189,7 @@ header.sticky {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 5px;
-  color: rgba(255,255,255,0.55);
+  color: rgba(255, 255, 255, 0.55);
   margin-bottom: 10px;
 }
 
@@ -190,14 +197,14 @@ header.sticky {
   font-size: 3.5rem;
   font-weight: 700;
   color: #fff;
-  font-family: 'Paytone One', sans-serif;
+  font-family: "Paytone One", sans-serif;
   letter-spacing: 3px;
   margin-bottom: 10px;
 }
 
 .explore-sub {
   font-size: 16px;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 32px;
 }
 
@@ -208,7 +215,9 @@ header.sticky {
   color: #fff;
   font-size: 15px;
   font-weight: 600;
-  transition: background 0.3s, transform 0.3s;
+  transition:
+    background 0.3s,
+    transform 0.3s;
   display: inline-block;
 }
 
@@ -292,17 +301,17 @@ header.sticky {
 }
 
 .re-image img {
-  width: 103%;
+  width: 98%;
   border-radius: 10px;
   object-fit: cover;
 }
 
 /* Right Content */
 .re-content {
-  flex: 1 1 40%;
+  flex: 1 1 42%;
   background: #000;
   color: #fff;
-  padding: 44px;
+  padding: 41px;
   border-radius: 10px;
 }
 
@@ -334,26 +343,6 @@ header.sticky {
 .re-btn:hover {
   background: #b71c1c;
   transform: translateY(-3px);
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .re-container {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .re-content {
-    padding: 30px 20px;
-  }
-
-  .re-content h1 {
-    font-size: 1.8rem;
-  }
-
-  .re-content p {
-    font-size: 0.95rem;
-  }
 }
 
 /* testamonials */

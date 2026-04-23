@@ -46,6 +46,9 @@
             <li data-target="appointments-section">
               <i class="bx bx-calendar"></i> Appointments
             </li>
+            <li data-target="stakes-section">
+              <i class="bx bx-coin-stack"></i> My Stakes
+            </li>
             <li>
               <a href="{{ url_for('logout') }}" class="logout-link">
                 <i class="bx bx-log-out"></i> Logout
@@ -111,6 +114,46 @@
           <p class="app-txt">You have not booked any appointments yet.</p>
           {% endif %}
         </div>
+
+        <!-- My Stakes Section -->
+        <div class="appointments-container section" id="stakes-section" style="display: none">
+          <h2 class="appointments-title">My Fractional Stakes</h2>
+          <p style="color:#888; margin-bottom:15px; font-size:14px;">
+            Cars you partially own via blockchain-recorded fractional ownership.
+          </p>
+
+          {% if stakes %}
+          <div class="appointments-grid">
+            {% for stake in stakes %}
+            <div class="appointment-card" style="border-left: 4px solid #6c63ff;">
+              <div class="appointment-header">
+                <h3 class="vehicle-name">{{ stake.car_name }}</h3>
+                <span style="background:#6c63ff; color:white; padding:3px 10px; border-radius:12px; font-size:12px;">
+                  {{ stake.shares }} Shares
+                </span>
+              </div>
+              <div class="appointment-details">
+                <p><strong>Plate:</strong> {{ stake.plate }}</p>
+                <p><strong>Your Shares:</strong> {{ stake.shares }}</p>
+                <p><strong>Total Sold:</strong> {{ stake.total_shares_sold }}</p>
+                <p><strong>Date:</strong> {{ stake.created_at.strftime('%d %b %Y') if stake.created_at else 'N/A' }}</p>
+                {% if stake.blockchain_id %}
+                <p style="font-size:11px; color:#6c63ff; word-break:break-all;">
+                  <strong>Blockchain TX:</strong> {{ stake.blockchain_id[:30] }}...
+                </p>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="app-txt">You have not purchased any fractional stakes yet.</p>
+          <a href="{{ url_for('sportscar') }}" style="display:inline-block; margin-top:10px; padding:10px 20px; background:#6c63ff; color:white; border-radius:6px; text-decoration:none;">
+            Browse Cars to Invest
+          </a>
+          {% endif %}
+        </div>
+
       </div>
     </section>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>

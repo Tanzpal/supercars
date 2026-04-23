@@ -1,4 +1,5 @@
 import os
+import config
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_mysqldb import MySQL
 from flask_mail import Mail, Message
@@ -6,22 +7,28 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 import MySQLdb.cursors
 from datetime import datetime, timedelta
 
+# Import blockchain modules
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from blockchain.ownership_contract import buy_shares, get_ownership_status
+from blockchain.vehicle_passport import register_car_on_blockchain
+
 # ------------------------------------------------------------
 # 1. FLASK APP SETUP
 # ------------------------------------------------------------
 app = Flask(__name__)
 
-# Secret key for sessions & secure tokens
-app.secret_key = 'supercars_secret_key'
+# Secret key for sessions & secure tokens — loaded from config.py (gitignored)
+app.secret_key = config.SECRET_KEY
 
 
 # ------------------------------------------------------------
 # 2. MYSQL DATABASE CONFIGURATION
 # ------------------------------------------------------------
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Test@123'
-app.config['MYSQL_DB'] = 'supercars_db'
+app.config['MYSQL_HOST']     = config.MYSQL_HOST
+app.config['MYSQL_USER']     = config.MYSQL_USER
+app.config['MYSQL_PASSWORD'] = config.MYSQL_PASSWORD
+app.config['MYSQL_DB']       = config.MYSQL_DB
 
 mysql = MySQL(app)
 
@@ -34,14 +41,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # ------------------------------------------------------------
 # 3. EMAIL (Flask-Mail) CONFIGURATION
 # ------------------------------------------------------------
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'bikesbay@gmail.com'
-app.config['MAIL_PASSWORD'] = 'enwlipwlzwoeirqo'
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_DEFAULT_SENDER'] = ('Cars Bay', 'your_email@gmail.com')
+app.config['MAIL_SERVER']         = config.MAIL_SERVER
+app.config['MAIL_PORT']           = config.MAIL_PORT
+app.config['MAIL_USERNAME']       = config.MAIL_USERNAME
+app.config['MAIL_PASSWORD']       = config.MAIL_PASSWORD
+app.config['MAIL_USE_TLS']        = config.MAIL_USE_TLS
+app.config['MAIL_DEFAULT_SENDER'] = config.MAIL_DEFAULT_SENDER
 
 mail = Mail(app)
+
 
 
 # Token generator for password reset emails
@@ -214,6 +222,21 @@ def verify_car(car_id):
     cursor.execute("UPDATE resale_cars SET is_verified = 1 WHERE id = %s", (car_id,))
     mysql.connection.commit()
 
+    # --- Register car on blockchain ---
+    bc_result = register_car_on_blockchain(car_id)
+    if bc_result['status'] == 'success':
+        blockchain_id = bc_result['blockchain_id']
+        cursor.execute(
+            "UPDATE resale_cars SET blockchain_id = %s WHERE id = %s",
+            (blockchain_id, car_id)
+        )
+        mysql.connection.commit()
+        flash(f"Car registered on blockchain. TX: {blockchain_id[:20]}...", "info")
+    else:
+        flash("Blockchain registration failed: " + bc_result['message'], "warning")
+
+    cursor.close()
+
     # Email to seller
     msg = Message(
         "Your Car Has Been Verified!",
@@ -223,9 +246,14 @@ def verify_car(car_id):
     msg.body = f"""
 Hello {seller_name},
 
-Your car has been VERIFIED by our team!
+Your car has been VERIFIED by our team and registered on the blockchain!
 
-We will visit your place within 2–5 days for manual verification.
+Blockchain Record: {bc_result.get('blockchain_id', 'N/A')}
+
+This means your car listing is now tamper-proof and eligible for
+fractional ownership by buyers on Cars-Bay.
+
+We will visit your place within 2-5 days for manual verification.
 
 Thank you!
 Cars-Bay Team
@@ -558,13 +586,26 @@ def dashboard():
     cur.execute("SELECT id, vehicle, date, time, area, city FROM appointments WHERE user_email=%s", (session['email'],))
     appointments = cur.fetchall()
 
+    # User's fractional ownership stakes
+    cur.execute("""
+        SELECT o.id, o.shares, o.created_at,
+               r.name as car_name, r.plate, r.car_image, r.blockchain_id,
+               (SELECT IFNULL(SUM(shares),0) FROM ownership WHERE vehicle_id = o.vehicle_id) as total_shares_sold
+        FROM ownership o
+        JOIN resale_cars r ON o.vehicle_id = r.id
+        WHERE o.user_id = %s
+        ORDER BY o.created_at DESC
+    """, (session['user_id'],))
+    stakes = cur.fetchall()
+
     cur.close()
 
     return render_template(
         'dashboard.html',
         username=session['username'],
         wishlist=wishlist_items,
-        appointments=appointments
+        appointments=appointments,
+        stakes=stakes
     )
 
 
@@ -689,6 +730,73 @@ def XUV():
 @app.route('/ResaleForm')
 def ResaleForm():
     return render_template('ResaleForm.html')
+# ------------------------------------------------------------
+# 20. FRACTIONAL OWNERSHIP API
+# ------------------------------------------------------------
+@app.route('/api/ownership/status/<int:car_id>', methods=['GET'])
+def api_ownership_status(car_id):
+    # Get total shares sold from DB first
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("SELECT IFNULL(SUM(shares), 0) as total_shares FROM ownership WHERE vehicle_id=%s", (car_id,))
+    db_result = cur.fetchone()
+    total_db_shares = int(db_result['total_shares']) if db_result and db_result['total_shares'] else 0
+    cur.close()
+
+    # Try checking blockchain status
+    bc_result = get_ownership_status(car_id)
+    
+    return jsonify({
+        "status": "success", 
+        "car_id": car_id, 
+        "total_shares_sold": total_db_shares,
+        "blockchain_data": bc_result
+    })
+
+@app.route('/api/ownership/buy', methods=['POST'])
+def api_ownership_buy():
+    if 'email' not in session:
+        return jsonify({"status": "error", "message": "User not logged in"}), 401
+
+    data = request.get_json()
+    car_id = data.get("car_id")
+    shares_amount = data.get("shares")
+
+    if not car_id or not shares_amount:
+        return jsonify({"status": "error", "message": "Missing parameters"}), 400
+
+    try:
+        shares_amount = int(shares_amount)
+        if shares_amount <= 0:
+            return jsonify({"status": "error", "message": "Invalid share amount"}), 400
+    except ValueError:
+        return jsonify({"status": "error", "message": "Invalid share amount"}), 400
+
+    # Execute blockchain transaction
+    bc_res = buy_shares(car_id, session['email'], shares_amount)
+
+    if bc_res['status'] == 'error':
+        return jsonify(bc_res), 500
+
+    # Update DB
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute(
+            "INSERT INTO ownership (vehicle_id, user_id, shares) VALUES (%s, %s, %s)",
+            (car_id, session['user_id'], shares_amount)
+        )
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({
+            "status": "success",
+            "message": f"Successfully purchased {shares_amount} shares!",
+            "blockchain_tx": bc_res.get("tx_hash", "")
+        })
+    except Exception as e:
+        print("DB Error:", e)
+        return jsonify({"status": "error", "message": "Database update failed"}), 500
+
+
 # ------------------------------------------------------------
 # 21. RUN THE APP
 # ------------------------------------------------------------

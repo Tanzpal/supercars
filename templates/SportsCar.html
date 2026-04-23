@@ -46,6 +46,38 @@
                   right gear.
                 </b>
               </p>
+
+              <!-- Fractional Ownership Panel -->
+              <div class="ownership-panel" id="ownership-panel-1" style="
+                margin-top:16px; padding:14px 16px;
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+                border-radius:10px; color:#fff; border:1px solid #6c63ff;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <h4 style="margin:0; font-size:14px; color:#a29bfe;">Fractional Ownership</h4>
+                  <span style="font-size:11px; color:#74b9ff; background:#0a3d62; padding:2px 8px; border-radius:10px;">Blockchain Verified</span>
+                </div>
+                <p style="margin:4px 0; font-size:13px;">
+                  Shares Sold: <strong id="shares-sold-1" style="color:#55efc4;">Loading...</strong>
+                  &nbsp;/&nbsp; 1000 Total
+                </p>
+                <div style="background:#0a3d62; border-radius:6px; height:6px; margin:8px 0;">
+                  <div id="shares-bar-1" style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
+                  <input type="number" id="buy-amount-1" value="10" min="1" max="1000"
+                    style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
+                           background:#0a3d62; color:#fff; font-size:13px;">
+                  <button onclick="buyStake(1)" id="buy-btn-1"
+                    style="padding:7px 16px; background:#6c63ff; color:white; border:none;
+                           border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;
+                           transition: background 0.2s;"
+                    onmouseover="this.style.background='#a29bfe'"
+                    onmouseout="this.style.background='#6c63ff'">
+                    Buy Stake
+                  </button>
+                </div>
+                <p id="buy-msg-1" style="margin-top:8px; font-size:12px; min-height:16px;"></p>
+              </div>
             </div>
 
             <!-- Heart Icon -->
@@ -106,5 +138,68 @@
     </section>
 
     <script src="{{ url_for('static', filename='js/Sportscar.js') }}"></script>
+
+    <script>
+      const TOTAL_SHARES = 1000;
+
+      // Load share data on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        fetchShareStatus(1);
+      });
+
+      function fetchShareStatus(carId) {
+        fetch(`/api/ownership/status/${carId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const sold = data.total_shares_sold;
+              document.getElementById(`shares-sold-${carId}`).innerText = sold;
+              const pct = Math.min((sold / TOTAL_SHARES) * 100, 100).toFixed(1);
+              document.getElementById(`shares-bar-${carId}`).style.width = pct + '%';
+            } else {
+              document.getElementById(`shares-sold-${carId}`).innerText = 'N/A';
+            }
+          })
+          .catch(() => {
+            document.getElementById(`shares-sold-${carId}`).innerText = 'Offline';
+          });
+      }
+
+      function buyStake(carId) {
+        const amount = document.getElementById(`buy-amount-${carId}`).value;
+        const msgBox = document.getElementById(`buy-msg-${carId}`);
+        const btn    = document.getElementById(`buy-btn-${carId}`);
+
+        btn.disabled = true;
+        btn.innerText = 'Processing...';
+        msgBox.style.color = '#74b9ff';
+        msgBox.innerText = 'Sending transaction to blockchain...';
+
+        fetch('/api/ownership/buy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ car_id: carId, shares: amount })
+        })
+        .then(res => res.json())
+        .then(data => {
+          btn.disabled = false;
+          btn.innerText = 'Buy Stake';
+          if (data.status === 'success') {
+            msgBox.style.color = '#55efc4';
+            msgBox.innerText = data.message;
+            fetchShareStatus(carId); // refresh bar
+          } else {
+            msgBox.style.color = '#ff7675';
+            msgBox.innerText = data.message || 'Transaction failed.';
+          }
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.innerText = 'Buy Stake';
+          msgBox.style.color = '#ff7675';
+          msgBox.innerText = 'Please log in to buy shares.';
+        });
+      }
+    </script>
   </body>
 </html>

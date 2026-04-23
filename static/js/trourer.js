@@ -26,18 +26,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // -------------------
   // Search Cars
   // -------------------
-  searchInput.addEventListener("keyup", () => {
-    const query = searchInput.value.toLowerCase();
-    blogCards.forEach((card) => {
-      const title = card.querySelector("h3").innerText.toLowerCase();
-      const text = card.querySelector("p").innerText.toLowerCase();
-      if (title.includes(query) || text.includes(query)) {
-        card.style.display = "block";
-      } else {
-        card.style.display = "none";
-      }
+  if (searchInput) {
+    searchInput.addEventListener("keyup", () => {
+      const query = searchInput.value.toLowerCase();
+      blogCards.forEach((card) => {
+        const textContent = card.textContent.toLowerCase();
+        if (textContent.includes(query)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
     });
-  });
+  }
 
   // -------------------
   // Like Count (optional)

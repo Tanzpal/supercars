@@ -685,7 +685,10 @@ def sedan():
 def XUV():
     return render_template('XUV.html')
 
-
+# resell form route
+@app.route('/ResaleForm')
+def ResaleForm():
+    return render_template('ResaleForm.html')
 # ------------------------------------------------------------
 # 21. RUN THE APP
 # ------------------------------------------------------------

@@ -139,110 +139,91 @@ header.sticky {
   padding-top: 140px;
 }
 
-.slider {
-  height: 100vh;
-  width: 100%;
-  margin-top: -50px;
+.explore-sec {
+  padding: 80px 9%;
+}
+
+.explore-card {
   position: relative;
-  color: var(--bg-color);
-}
-.slider .list .item {
-  position: absolute;
-  inset: 0 0 0 0;
+  border-radius: 16px;
   overflow: hidden;
-  opacity: 0;
-  transition: 0.5s;
+  height: 420px;
+  background: #111;
+  display: block;
+  text-decoration: none;
 }
-.slider .list .item img {
+
+.explore-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.slider .list .item::after {
-  content: "";
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  background-image: linear-gradient(to top, #000 40%, transparent);
-}
-.slider .list .item .content {
-  position: absolute;
-  left: 10%;
-  top: 20%;
-  width: 500px;
-  max-width: 80%;
-  z-index: 1;
-}
-.slider .list .item .content p:nth-child(1) {
-  text-transform: uppercase;
-  letter-spacing: 10px;
-}
-.slider .list .item .content h2 {
-  font-size: 100px;
-  margin: 0;
-}
-.slider .list .item.active {
-  opacity: 1;
-  z-index: 10;
+  opacity: 0.6;
+  transition:
+    opacity 0.5s,
+    transform 0.5s;
 }
 
-@keyframes showContent {
-  to {
-    transform: translateY(0);
-    filter: blur(0);
-    opacity: 1;
-  }
+.explore-card:hover img {
+  opacity: 0.4;
+  transform: scale(1.03);
 }
-.slider .list .item.active p:nth-child(1),
-.slider .list .item.active h2,
-.slider .list .item.active p:nth-child(3) {
-  transform: translateY(30px);
-  filter: blur(20px);
-  opacity: 0;
-  animation: showContent 0.5s 0.7s ease-in-out 1 forwards;
-}
-.slider .list .item.active h2 {
-  animation-delay: 1s;
-}
-.slider .list .item.active p:nth-child(3) {
-  animation-duration: 1.3s;
-}
-.arrows {
+
+.explore-overlay {
   position: absolute;
-  top: 30%;
-  right: 50px;
-  z-index: 100;
-}
-.arrows button {
-  background-color: #eee5;
-  border: none;
-  font-family: monospace;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  font-size: x-large;
-  color: #eee;
-  transition: 0.5s;
-}
-.arrows button:hover {
-  background-color: #eee;
-  color: black;
-}
-.thumbnail {
-  position: absolute;
-  bottom: 50px;
-  z-index: 11;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.88) 0%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
+  );
   display: flex;
-  gap: 10px;
-  width: 100%;
-  height: 200px;
-  padding: 0 50px;
-  box-sizing: border-box;
-  overflow: none;
-  justify-content: center;
-  background-size: cover;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.explore-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 10px;
+}
+
+.explore-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: "Paytone One", sans-serif;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.explore-sub {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 32px;
+}
+
+.explore-btn {
+  padding: 13px 36px;
+  background: #e53935;
+  border-radius: 50px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  transition:
+    background 0.3s,
+    transform 0.3s;
+  display: inline-block;
+}
+
+.explore-card:hover .explore-btn {
+  background: #b71c1c;
+  transform: translateY(-2px);
 }
 .thumbnail::-webkit-scrollbar {
   width: 0;
@@ -320,17 +301,17 @@ header.sticky {
 }
 
 .re-image img {
-  width: 103%;
+  width: 98%;
   border-radius: 10px;
   object-fit: cover;
 }
 
 /* Right Content */
 .re-content {
-  flex: 1 1 40%;
+  flex: 1 1 42%;
   background: #000;
   color: #fff;
-  padding: 44px;
+  padding: 41px;
   border-radius: 10px;
 }
 
@@ -362,26 +343,6 @@ header.sticky {
 .re-btn:hover {
   background: #b71c1c;
   transform: translateY(-3px);
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .re-container {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .re-content {
-    padding: 30px 20px;
-  }
-
-  .re-content h1 {
-    font-size: 1.8rem;
-  }
-
-  .re-content p {
-    font-size: 0.95rem;
-  }
 }
 
 /* testamonials */

@@ -25,30 +25,44 @@
       <div class="container">
         <!-- Search section -->
         <div class="search-section">
-          <input type="text" id="searchInput" placeholder=" Search cars..." />
+          <input
+            type="text"
+            id="searchInput"
+            placeholder=" Search cars or type (e.g. sports, suv)..."
+          />
         </div>
 
-        <!--Car  cards -->
+        <!-- Car cards -->
         <div id="blogContainer">
-          <div class="blog-card" data-id="1">
-            <img
-              src="{{ url_for('static', filename='photos/aprillia.jpg') }}"
-              alt=""
-            />
+          {% for car in cars %}
+          <div
+            class="blog-card"
+            data-id="{{ car.id }}"
+            data-type="{{ car.car_type | lower }}"
+          >
+            <img src="/{{ car.image }}" alt="Car Image" />
+
             <div class="blog-content">
-              <h3><a href="{{ url_for('home') }}">Aprillia RSV4</a></h3>
-              <div class="blog-meta">Aprillia | 01 Jan 2023 - 25</div>
-              <i>Engine 1099cc, HorsePower 220hp, Max Speed 305kmph</i> <br />
-              <i>Registration year: 2023, Number of Owners: 1</i>
-              <p>
-                <b>
-                  If you want to push it to the max, make sure you have the
-                  right gear.
-                </b>
-              </p>
+              <h3><a href="#">{{ car.car_name }}</a></h3>
+
+              <div class="blog-meta">{{ car.brand }} | {{ car.year }}</div>
+
+              <i>
+                Engine {{ car.cc }}cc, HorsePower {{ car.hp }}hp, Max Speed {{
+                car.speed }}kmph
+              </i>
+              <br />
+
+              <i>
+                Registration year: {{ car.year }}, Number of Owners: {{
+                car.owners }}
+              </i>
+
+              <p><b>{{ car.description }}</b></p>
+              <p><b>Rs. {{ car.price }}</b></p>
 
               <!-- Fractional Ownership Panel -->
-              <div class="ownership-panel" id="ownership-panel-1" style="
+              <div class="ownership-panel" id="ownership-panel-{{ car.id }}" style="
                 margin-top:16px; padding:14px 16px;
                 background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
                 border-radius:10px; color:#fff; border:1px solid #6c63ff;">
@@ -57,34 +71,39 @@
                   <span style="font-size:11px; color:#74b9ff; background:#0a3d62; padding:2px 8px; border-radius:10px;">Blockchain Verified</span>
                 </div>
                 <p style="margin:4px 0; font-size:13px;">
-                  Shares Sold: <strong id="shares-sold-1" style="color:#55efc4;">Loading...</strong>
+                  Shares Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong>
                   &nbsp;/&nbsp; 1000 Total
                 </p>
                 <div style="background:#0a3d62; border-radius:6px; height:6px; margin:8px 0;">
-                  <div id="shares-bar-1" style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
+                  <div id="shares-bar-{{ car.id }}" style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
                 </div>
                 <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                  <input type="number" id="buy-amount-1" value="10" min="1" max="1000"
+                  <input type="number" id="buy-amount-{{ car.id }}" value="10" min="1" max="1000"
                     style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
                            background:#0a3d62; color:#fff; font-size:13px;">
-                  <button onclick="buyStake(1)" id="buy-btn-1"
+                  <button onclick="buyStake({{ car.id }})" id="buy-btn-{{ car.id }}"
                     style="padding:7px 16px; background:#6c63ff; color:white; border:none;
-                           border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;
-                           transition: background 0.2s;"
+                           border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"
                     onmouseover="this.style.background='#a29bfe'"
                     onmouseout="this.style.background='#6c63ff'">
                     Buy Stake
                   </button>
                 </div>
-                <p id="buy-msg-1" style="margin-top:8px; font-size:12px; min-height:16px;"></p>
+                <p id="buy-msg-{{ car.id }}" style="margin-top:8px; font-size:12px; min-height:16px;"></p>
               </div>
             </div>
 
-            <!-- Heart Icon -->
+            <!-- ❤️ Wishlist -->
             <div class="like-btn">
-              <i class="heart-icon" id="heart-1">&#9825;</i>
+              <i class="heart-icon">&#9825;</i>
             </div>
+
+            <!-- ✅ NEW: DELETE BUTTON (ONLY OWNER) -->
+            {% if session['email'] == car.email %}
+            <button class="delete-btn" data-id="{{ car.id }}">Delete</button>
+            {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
     </section>

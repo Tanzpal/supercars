@@ -6,6 +6,7 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
 import MySQLdb.cursors
 from datetime import datetime, timedelta
+from flask import session, redirect, url_for, flash
 
 # Import blockchain modules
 import sys
@@ -487,84 +488,54 @@ def get_booked_times():
 def sell_car_page():
     if request.method == 'POST':
         try:
-            # Form data
-            name = request.form['name']
-            email = request.form['email']
+            if 'email' not in session:
+                flash("Please login first!", "danger")
+                return redirect(url_for('show_login'))
+
+            # Get form data
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            email = session['email']   # ✅ FIXED HERE
             phone = request.form['phone']
-            address = request.form['address']
-            chassis = request.form['chassis']
-            plate = request.form['plate']
-            years_used = request.form['years_used']
+            car_name = request.form['carName']
+            car_type = request.form['carType']
+            brand = request.form['brand']
+            cc = request.form['cc']
+            hp = request.form['hp']
+            speed = request.form['speed']
+            year = request.form['year']
             owners = request.form['owners']
-            rc_image = request.files['rc_image']
-            car_image = request.files['car_image']
+            price = request.form['price']
+            description = request.form['description']
 
-            # Save images
-            rc_path = os.path.join(app.config['UPLOAD_FOLDER'], rc_image.filename)
-            car_path = os.path.join(app.config['UPLOAD_FOLDER'], car_image.filename)
-            rc_image.save(rc_path)
-            car_image.save(car_path)
+            image = request.files['image']
 
-            # Save to DB
+            # Save image
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image.filename)
+            image.save(image_path)
+
+            # Insert into DB
             cursor = mysql.connection.cursor()
-            sql = """
+            query = """
                 INSERT INTO resale_cars 
-                (name, email, phone, address, chassis, plate, rc_image, car_image, years_used, owners)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (firstname, lastname, email, phone, car_name, car_type, brand, cc, hp, speed, year, owners, price, description, image)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(sql, (name, email, phone, address, chassis, plate, rc_path, car_path, years_used, owners))
+            cursor.execute(query, (
+                firstname, lastname, email, phone, car_name, car_type,
+                brand, cc, hp, speed, year, owners, price, description, image_path
+            ))
             mysql.connection.commit()
             cursor.close()
 
-            # ----------------------------------------------------
-            # SEND FORMAL EMAIL TO USER (CONFIRMATION)
-            # ----------------------------------------------------
-            try:
-                subject = "Car Submission Received – Under Review | CarsBay"
-                msg = Message(
-                    subject,
-                    sender="carsbay@gmail.com",
-                    recipients=[email]
-                )
-
-                msg.body = f"""
-Dear {name},
-
-Thank you for submitting your car details on CarsBay.
-
-We have successfully received your listing and our verification team will now begin reviewing the following information:
-
-• Chassis Number: {chassis}
-• License Plate: {plate}
-• Years Used: {years_used}
-• Number of Previous Owners: {owners}
-
-Our team will carefully evaluate your submission to ensure it meets our quality and authenticity standards. 
-If any additional details or clarification are required, we will contact you directly at {email} or {phone}.
-
-You will receive another email once the review process is complete.
-
-Thank you for choosing CarsBay as your trusted platform for selling your motorcycle.
-
-Warm regards,  
-CarsBay Verification Team
-"""
-
-                mail.send(msg)
-
-            except Exception as email_error:
-                print("Email Error:", email_error)
-                flash("Car details submitted, but email could not be sent.", "warning")
-
-            flash("Car details submitted successfully!", "success")
-            return redirect(url_for('home'))
+            flash("Car posted successfully!", "success")
+            return redirect(url_for('sportscar'))
 
         except Exception as e:
             print("Error:", e)
-            flash("Something went wrong. Try again.", "danger")
-            return redirect(url_for('sell_car_page'))
+            flash("Error submitting form", "danger")
 
-    return render_template('resale.html')
+    return render_template('ResaleForm.html')
 
 
 
@@ -578,12 +549,18 @@ def dashboard():
 
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-    # User wishlist
-    cur.execute("SELECT id, car_name, car_image, car_link FROM wishlist WHERE user_email=%s", (session['email'],))
+    # Wishlist
+    cur.execute(
+        "SELECT id, car_name, car_image, car_link FROM wishlist WHERE user_email=%s",
+        (session['email'],)
+    )
     wishlist_items = cur.fetchall()
 
-    # User appointments
-    cur.execute("SELECT id, vehicle, date, time, area, city FROM appointments WHERE user_email=%s", (session['email'],))
+    # Appointments
+    cur.execute(
+        "SELECT id, vehicle, date, time, area, city FROM appointments WHERE user_email=%s",
+        (session['email'],)
+    )
     appointments = cur.fetchall()
 
     # User's fractional ownership stakes
@@ -598,6 +575,13 @@ def dashboard():
     """, (session['user_id'],))
     stakes = cur.fetchall()
 
+    # User's posted cars
+    cur.execute(
+        "SELECT * FROM resale_cars WHERE email=%s ORDER BY id DESC",
+        (session['email'],)
+    )
+    user_cars = cur.fetchall()
+
     cur.close()
 
     return render_template(
@@ -605,8 +589,38 @@ def dashboard():
         username=session['username'],
         wishlist=wishlist_items,
         appointments=appointments,
-        stakes=stakes
+        stakes=stakes,
+        user_cars=user_cars
     )
+
+
+# ------------------------------------------------------------
+# 16. DELETE BLOCK
+# ------------------------------------------------------------
+
+@app.route('/delete_car/<int:car_id>', methods=['POST'])
+def delete_car(car_id):
+    if 'email' not in session:
+        return jsonify({"status": "error", "message": "Login required"}), 401
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # Check ownership
+    cursor.execute("SELECT * FROM resale_cars WHERE id=%s", (car_id,))
+    car = cursor.fetchone()
+
+    if not car:
+        return jsonify({"status": "error", "message": "Car not found"}), 404
+
+    if car['email'] != session['email']:
+        return jsonify({"status": "error", "message": "Unauthorized"}), 403
+
+    # Delete
+    cursor.execute("DELETE FROM resale_cars WHERE id=%s", (car_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+    return jsonify({"status": "success"})
 
 
 # ------------------------------------------------------------
@@ -716,20 +730,26 @@ def about():
 
 @app.route('/sportscar')
 def sportscar():
-    return render_template('SportsCar.html')
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM resale_cars ORDER BY id DESC")
+    cars = cursor.fetchall()
+    cursor.close()
 
-@app.route('/Sedan')
-def sedan():
-    return render_template('Sedan.html')
+    return render_template('SportsCar.html', cars=cars)
 
-@app.route('/XUV')
-def XUV():
-    return render_template('XUV.html')
+# ------------------------------------------------------------
+# 11. Resalform - Allowance
+# ------------------------------------------------------------
 
-# resell form route
 @app.route('/ResaleForm')
 def ResaleForm():
+    if 'username' not in session:
+        flash("Please login first to sell your car.")
+        return redirect(url_for('show_login'))
+    
     return render_template('ResaleForm.html')
+
+
 # ------------------------------------------------------------
 # 20. FRACTIONAL OWNERSHIP API
 # ------------------------------------------------------------

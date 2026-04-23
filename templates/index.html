@@ -54,7 +54,6 @@
       </ul>
     </header>
 
-    <!-- ============================= -->
     <!-- HOME SECTION (Landing Section) -->
     <!-- ============================= -->
     <section class="home" id="home">
@@ -72,94 +71,23 @@
       </div>
     </section>
 
+    <!-- CARS EXPLORE SECTION -->
     <!-- ============================= -->
-    <!-- CAROUSEL SECTION -->
-    <!-- ============================= -->
-    <section class="sec-sec" id="Slider">
-      <div class="slider">
-        <!-- Main Image Slides -->
-        <div class="list">
-          <!-- Sports Car Slide -->
-          <div class="item active">
-            <img
-              src="{{ url_for('static', filename='photos/SportsBg.png') }}"
-              alt=""
-            />
-            <div class="content">
-              <p>design</p>
-              <h2>Sports</h2>
-              <p>" Engineered for Speed "</p>
-              <br />
-              <a href="{{ url_for('sportscar') }}" class="home-btn"
-                >View Cars</a
-              >
-            </div>
+    <section class="explore-sec" id="Slider">
+      <a href="{{ url_for('sportscar') }}" class="explore-card">
+        <img
+          src="{{ url_for('static', filename='photos/SportsBg.png') }}"
+          alt="Explore Cars"
+        />
+        <div class="explore-overlay">
+          <span class="explore-label">Browse our collection</span>
+          <div class="explore-title">CARS</div>
+          <div class="explore-sub">
+            Sports · Sedan · XUV — find your perfect match
           </div>
-
-          <!-- Sedan Car Slide -->
-          <div class="item">
-            <img
-              src="{{ url_for('static', filename='photos/SEDAN.png') }}"
-              alt=""
-            />
-            <div class="content">
-              <p>design</p>
-              <h2>Sedan</h2>
-              <p>" Unleash Your Spirit "</p>
-              <br />
-              <a href="{{ url_for('sedan') }}" class="home-btn">View Cars</a>
-            </div>
-          </div>
-
-          <!-- Tourer Car Slide -->
-          <div class="item">
-            <img
-              src="{{ url_for('static', filename='photos/XUV.png') }}"
-              alt=""
-            />
-            <div class="content">
-              <p>design</p>
-              <h2>XUV</h2>
-              <p>" emphasize themes of freedom "</p>
-              <br />
-              <a href="{{ url_for('XUV') }}" class="home-btn">View Cars</a>
-            </div>
-          </div>
+          <span class="explore-btn">Explore All Cars →</span>
         </div>
-
-        <!-- Navigation Arrows -->
-        <div class="arrows">
-          <button id="prev"><</button>
-          <button id="next">></button>
-        </div>
-
-        <!-- Thumbnail Previews -->
-        <div class="thumbnail">
-          <div class="item active">
-            <img
-              src="{{ url_for('static', filename='photos/SportsBg.png') }}"
-              alt=""
-            />
-            <div class="content">
-              <span class="ggg">Sports Cars</span>
-            </div>
-          </div>
-          <div class="item">
-            <img
-              src="{{ url_for('static', filename='photos/SEDAN.png') }}"
-              alt=""
-            />
-            <div class="content">Sedan Cars</div>
-          </div>
-          <div class="item">
-            <img
-              src="{{ url_for('static', filename='photos/XUV.png') }}"
-              alt=""
-            />
-            <div class="content">Tourer Cars</div>
-          </div>
-        </div>
-      </div>
+      </a>
     </section>
 
     <!-- ============================= -->

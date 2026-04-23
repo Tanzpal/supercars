@@ -43,12 +43,19 @@
             <li class="active" data-target="wishlist-section">
               <i class="bx bx-heart"></i> Wishlist
             </li>
+
             <li data-target="appointments-section">
               <i class="bx bx-calendar"></i> Appointments
             </li>
             <li data-target="stakes-section">
               <i class="bx bx-coin-stack"></i> My Stakes
             </li>
+
+            <!-- NEW SECTION -->
+            <li data-target="yourcar-section">
+              <i class="bx bx-car"></i> Your Car
+            </li>
+
             <li>
               <a href="{{ url_for('logout') }}" class="logout-link">
                 <i class="bx bx-log-out"></i> Logout
@@ -77,7 +84,45 @@
           {% endif %}
         </div>
 
-        <!-- Appointments Section -->
+        <!-- YOUR CAR SECTION -->
+        <div
+          class="yourcar-container section"
+          id="yourcar-section"
+          style="display: none"
+        >
+          <h2 class="heading-yourcar">My Listed Cars</h2>
+
+          {% if user_cars %}
+          <div class="yourcar-grid">
+            {% for car in user_cars %}
+            <div class="yourcar-card" data-id="{{ car.id }}">
+              <div class="card-img">
+                <img src="/{{ car.image }}" alt="{{ car.car_name }}" />
+                <span class="car-type">{{ car.car_type }}</span>
+              </div>
+
+              <div class="card-body">
+                <h3 class="carname">{{ car.car_name }}</h3>
+
+                <p class="brand">{{ car.brand }}</p>
+
+                <div class="car-details">
+                  <span>Car year: {{ car.year }}</span>
+                  <span>Car Price: ₹{{ car.price }}</span>
+                </div>
+
+                <button class="delete-car-btn" data-id="{{ car.id }}">
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p>You have not listed any cars yet.</p>
+          {% endif %}
+        </div>
+
         <!-- Appointments Section -->
         <div
           class="appointments-container section"

@@ -61,6 +61,30 @@
               <p><b>{{ car.description }}</b></p>
               <p><b>Rs. {{ car.price }}</b></p>
 
+              <!-- AI Health Score Badge -->
+              <div id="health-badge-{{ car.id }}" style="
+                display:flex; align-items:center; gap:12px;
+                margin-top:12px; padding:10px 14px;
+                background:#0d1117; border-radius:8px;
+                border:1px solid #30363d;">
+                <div style="text-align:center; min-width:52px;">
+                  <div id="health-score-{{ car.id }}" style="
+                    font-size:22px; font-weight:700; color:#58a6ff;">--</div>
+                  <div id="health-grade-{{ car.id }}" style="
+                    font-size:11px; color:#8b949e; margin-top:2px;">AI Score</div>
+                </div>
+                <div style="flex:1;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span id="health-label-{{ car.id }}" style="font-size:13px; font-weight:600; color:#c9d1d9;">Loading...</span>
+                    <span style="font-size:11px; color:#8b949e;">Health</span>
+                  </div>
+                  <div style="background:#21262d; border-radius:4px; height:5px;">
+                    <div id="health-bar-{{ car.id }}" style="background:#58a6ff; height:5px; border-radius:4px; width:0%; transition:width 0.6s;"></div>
+                  </div>
+                  <p id="health-rec-{{ car.id }}" style="font-size:11px; color:#8b949e; margin:5px 0 0;"></p>
+                </div>
+              </div>
+
               <!-- Fractional Ownership Panel -->
               <div
                 class="ownership-panel"
@@ -246,13 +270,15 @@
     <script>
       const TOTAL_SHARES = 1000;
 
-      // Load share data on page load for ALL cars
+      // Load data on page load for ALL cars
       document.addEventListener("DOMContentLoaded", function () {
         {% for car in cars %}
         fetchShareStatus({{ car.id }});
+        fetchHealthScore({{ car.id }});
         {% endfor %}
       });
 
+      // ── Fractional Ownership ──────────────────────────────
       function fetchShareStatus(carId) {
         fetch(`/api/ownership/status/${carId}`)
           .then(res => res.json())
@@ -293,7 +319,7 @@
           if (data.status === 'success') {
             msgBox.style.color = '#55efc4';
             msgBox.innerText = data.message;
-            fetchShareStatus(carId); // refresh bar
+            fetchShareStatus(carId);
           } else {
             msgBox.style.color = '#ff7675';
             msgBox.innerText = data.message || 'Transaction failed.';
@@ -306,6 +332,35 @@
           msgBox.innerText = 'Please log in to buy shares.';
         });
       }
+
+      // ── AI Health Score ───────────────────────────────────
+      function fetchHealthScore(carId) {
+        fetch(`/api/telemetry/health/${carId}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status !== 'success') return;
+
+            const score = data.health_score;
+            const color = data.color || '#58a6ff';
+
+            const scoreEl = document.getElementById(`health-score-${carId}`);
+            const gradeEl = document.getElementById(`health-grade-${carId}`);
+            const labelEl = document.getElementById(`health-label-${carId}`);
+            const barEl   = document.getElementById(`health-bar-${carId}`);
+            const recEl   = document.getElementById(`health-rec-${carId}`);
+
+            if (scoreEl) { scoreEl.innerText = score; scoreEl.style.color = color; }
+            if (gradeEl) gradeEl.innerText = `Grade ${data.grade}`;
+            if (labelEl) { labelEl.innerText = data.label; labelEl.style.color = color; }
+            if (barEl)   { barEl.style.width = score + '%'; barEl.style.background = color; }
+            if (recEl)   recEl.innerText = data.recommendation;
+          })
+          .catch(() => {
+            const labelEl = document.getElementById(`health-label-${carId}`);
+            if (labelEl) labelEl.innerText = 'Score unavailable';
+          });
+      }
     </script>
+
   </body>
 </html>

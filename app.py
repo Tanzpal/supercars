@@ -13,6 +13,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from blockchain.ownership_contract import buy_shares, get_ownership_status
 from blockchain.vehicle_passport import register_car_on_blockchain
+from ai.model import predict as ai_predict, train_model as ai_train
 
 # ------------------------------------------------------------
 # 1. FLASK APP SETUP
@@ -810,6 +811,60 @@ def api_ownership_buy():
     except Exception as e:
         print("DB Error:", e)
         return jsonify({"status": "error", "message": "Database update failed"}), 500
+
+
+# ------------------------------------------------------------
+# 22. AI TELEMETRY — HEALTH SCORE API
+# ------------------------------------------------------------
+@app.route('/api/telemetry/health', methods=['POST'])
+def api_telemetry_health():
+    """
+    POST /api/telemetry/health
+    Body (JSON): { car_id, mileage, rpm_idle, rpm_load, oil_life_pct,
+                   tire_pressure, coolant_temp_c, battery_voltage, brake_pad_pct }
+    Returns: { health_score, grade, label, color, warnings, recommendation }
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"status": "error", "message": "No data provided"}), 400
+
+    try:
+        result = ai_predict(data)
+        car_id = data.get("car_id")
+
+        # Optionally persist health_score to DB for the car
+        if car_id:
+            try:
+                cur = mysql.connection.cursor()
+                cur.execute(
+                    "UPDATE resale_cars SET health_score = %s WHERE id = %s",
+                    (int(result["health_score"]), car_id)
+                )
+                mysql.connection.commit()
+                cur.close()
+            except Exception as db_err:
+                print("Health score DB update skipped:", db_err)
+
+        return jsonify({"status": "success", **result})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.route('/api/telemetry/health/<int:car_id>', methods=['GET'])
+def api_telemetry_health_get(car_id):
+    """
+    GET /api/telemetry/health/<car_id>
+    Returns a health report using auto-generated dummy telemetry for the car.
+    Useful for car listing pages where real OBD data isn't available.
+    """
+    from ai.dummy_data import generate_telemetry
+    telemetry = generate_telemetry(car_id)
+    try:
+        result = ai_predict(telemetry)
+        return jsonify({"status": "success", "car_id": car_id, **result})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # ------------------------------------------------------------

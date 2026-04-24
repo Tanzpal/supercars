@@ -1,95 +1,85 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cars-Bay</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/SportsCar.css') }}"
-    />
-  </head>
-  <body>
-    <header>
-      <a href="#" class="logo">Cars-Bay</a>
-      <ul class="navbar">
-        <li><a href="{{ url_for('home') }}">Home</a></li>
-        <li><a href="{{ url_for('show_login') }}">Login</a></li>
-        <li><a href="{{ url_for('about') }}">About</a></li>
-        <li><a href="{{ url_for('contactUs') }}">Contact & Support</a></li>
-        <li><a href="{{ url_for('dashboard') }}">Profile</a></li>
-      </ul>
-    </header>
 
-    <section class="HeroSection">
-      <div class="container">
-        <!-- Search section -->
-        <div class="search-section">
-          <input
-            type="text"
-            id="searchInput"
-            placeholder=" Search cars or type (e.g. sports, suv)..."
-          />
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cars-Bay</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/SportsCar.css') }}" />
+</head>
 
-        <!-- Car cards -->
-        <div id="blogContainer">
-          {% for car in cars %}
-          <div
-            class="blog-card"
-            data-id="{{ car.id }}"
-            data-type="{{ car.car_type | lower }}"
-          >
-            <img src="/{{ car.image }}" alt="Car Image" />
+<body>
+  <header>
+    <a href="#" class="logo">Cars-Bay</a>
+    <ul class="navbar">
+      <li><a href="{{ url_for('home') }}">Home</a></li>
+      <li><a href="{{ url_for('show_login') }}">Login</a></li>
+      <li><a href="{{ url_for('about') }}">About</a></li>
+      <li><a href="{{ url_for('contactUs') }}">Contact & Support</a></li>
+      <li><a href="{{ url_for('dashboard') }}">Profile</a></li>
+    </ul>
+  </header>
 
-            <div class="blog-content">
-              <h3><a href="#">{{ car.car_name }}</a></h3>
+  <section class="HeroSection">
+    <div class="container">
+      <!-- Search section -->
+      <div class="search-section">
+        <input type="text" id="searchInput" placeholder=" Search cars or type (e.g. sports, suv)..." />
+      </div>
 
-              <div class="blog-meta">{{ car.brand }} | {{ car.year }}</div>
+      <!-- Car cards -->
+      <div id="blogContainer">
+        {% for car in cars %}
+        <div class="blog-card" data-id="{{ car.id }}" data-type="{{ car.car_type | lower }}">
+          <img src="/{{ car.image }}" alt="Car Image" />
 
-              <i>
-                Engine {{ car.cc }}cc, HorsePower {{ car.hp }}hp, Max Speed {{
-                car.speed }}kmph
-              </i>
-              <br />
+          <div class="blog-content">
+            <h3><a href="#">{{ car.car_name }}</a></h3>
 
-              <i>
-                Registration year: {{ car.year }}, Number of Owners: {{
-                car.owners }}
-              </i>
+            <div class="blog-meta">{{ car.brand }} | {{ car.year }}</div>
 
-              <p><b>{{ car.description }}</b></p>
-              <p><b>Rs. {{ car.price }}</b></p>
+            <i>
+              Engine {{ car.cc }}cc, HorsePower {{ car.hp }}hp, Max Speed {{
+              car.speed }}kmph
+            </i>
+            <br />
 
-              <!-- AI Health Score Badge -->
-              <div id="health-badge-{{ car.id }}" style="
+            <i>
+              Registration year: {{ car.year }}, Number of Owners: {{
+              car.owners }}
+            </i>
+
+            <p><b>{{ car.description }}</b></p>
+            <p><b>Rs. {{ car.price }}</b></p>
+
+            <!-- AI Health Score Badge -->
+            <div id="health-badge-{{ car.id }}" style="
                 display:flex; align-items:center; gap:12px;
                 margin-top:12px; padding:10px 14px;
                 background:#0d1117; border-radius:8px;
                 border:1px solid #30363d;">
-                <div style="text-align:center; min-width:52px;">
-                  <div id="health-score-{{ car.id }}" style="
+              <div style="text-align:center; min-width:52px;">
+                <div id="health-score-{{ car.id }}" style="
                     font-size:22px; font-weight:700; color:#58a6ff;">--</div>
-                  <div id="health-grade-{{ car.id }}" style="
+                <div id="health-grade-{{ car.id }}" style="
                     font-size:11px; color:#8b949e; margin-top:2px;">AI Score</div>
-                </div>
-                <div style="flex:1;">
-                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                    <span id="health-label-{{ car.id }}" style="font-size:13px; font-weight:600; color:#c9d1d9;">Loading...</span>
-                    <span style="font-size:11px; color:#8b949e;">Health</span>
-                  </div>
-                  <div style="background:#21262d; border-radius:4px; height:5px;">
-                    <div id="health-bar-{{ car.id }}" style="background:#58a6ff; height:5px; border-radius:4px; width:0%; transition:width 0.6s;"></div>
-                  </div>
-                  <p id="health-rec-{{ car.id }}" style="font-size:11px; color:#8b949e; margin:5px 0 0;"></p>
-                </div>
               </div>
+              <div style="flex:1;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                  <span id="health-label-{{ car.id }}"
+                    style="font-size:13px; font-weight:600; color:#c9d1d9;">Loading...</span>
+                  <span style="font-size:11px; color:#8b949e;">Health</span>
+                </div>
+                <div style="background:#21262d; border-radius:4px; height:5px;">
+                  <div id="health-bar-{{ car.id }}"
+                    style="background:#58a6ff; height:5px; border-radius:4px; width:0%; transition:width 0.6s;"></div>
+                </div>
+                <p id="health-rec-{{ car.id }}" style="font-size:11px; color:#8b949e; margin:5px 0 0;"></p>
+              </div>
+            </div>
 
-              <!-- Fractional Ownership Panel -->
-              <div
-                class="ownership-panel"
-                id="ownership-panel-{{ car.id }}"
-                style="
+            <!-- Fractional Ownership Panel -->
+            <div class="ownership-panel" id="ownership-panel-{{ car.id }}" style="
                   margin-top: 16px;
                   padding: 14px 16px;
                   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -97,221 +87,192 @@
                   color: #fff;
                   border: 1px solid #6c63ff;
                   margin-bottom: 40px;
-                "
-              >
-                <div
-                  style="
+                ">
+              <div style="
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 10px;
-                  "
-                >
-                  <h4 style="margin: 0; font-size: 14px; color: #a29bfe">
-                    Fractional Ownership
-                  </h4>
-                  <span
-                    style="
+                  ">
+                <h4 style="margin: 0; font-size: 14px; color: #a29bfe">
+                  Fractional Ownership
+                </h4>
+                <span style="
                       font-size: 11px;
                       color: #74b9ff;
                       background: #0a3d62;
                       padding: 2px 8px;
                       border-radius: 10px;
-                    "
-                    >Blockchain Verified</span
-                  >
-                </div>
-                <p style="margin: 4px 0; font-size: 13px">
-                  Shares Sold:
-                  <strong id="shares-sold-{{ car.id }}" style="color: #55efc4"
-                    >Loading...</strong
-                  >
-                  &nbsp;/&nbsp; 10000 Total
-                </p>
-                <div
-                  style="
-                    background: #0a3d62;
-                    border-radius: 6px;
-                    height: 6px;
-                    margin: 8px 0;
-                  "
-                >
-                  <div
-                    id="shares-bar-{{ car.id }}"
-                    style="
-                      background: #6c63ff;
-                      height: 6px;
-                      border-radius: 6px;
-                      width: 0%;
-                      transition: width 0.5s;
-                    "
-                  ></div>
-                </div>
-                <div
-                  style="
-                    display: flex;
-                    gap: 8px;
-                    align-items: center;
-                    margin-top: 10px;
-                  "
-                >
-                  <input
-                    type="number"
-                    id="buy-amount-{{ car.id }}"
-                    value="10"
-                    min="1"
-                    max="1000"
-                    style="
-                      width: 65px;
-                      padding: 6px;
-                      border-radius: 6px;
-                      border: 1px solid #6c63ff;
-                      background: #0a3d62;
-                      color: #fff;
-                      font-size: 13px;
-                    "
-                  />
-                  <button
-                    onclick="buyStake({{ car.id }})"
-                    id="buy-btn-{{ car.id }}"
-                    style="
-                      padding: 7px 16px;
-                      background: #6c63ff;
-                      color: white;
-                      border: none;
-                      border-radius: 6px;
-                      cursor: pointer;
-                      font-size: 13px;
-                      font-weight: 600;
-                    "
-                    onmouseover="this.style.background = '#a29bfe'"
-                    onmouseout="this.style.background = '#6c63ff'"
-                  >
-                    Buy Stake
-                  </button>
-                </div>
-                <p
-                  id="buy-msg-{{ car.id }}"
-                  style="margin-top: 8px; font-size: 12px; min-height: 16px"
-                ></p>
+                    ">Blockchain Verified</span>
               </div>
+              <p style="margin:4px 0; font-size:13px;">
+                Shares Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong>
+                &nbsp;/&nbsp; 100 Total
+              </p>
+              <div style="background:#0a3d62; border-radius:6px; height:6px; margin:8px 0;">
+                <div id="shares-bar-{{ car.id }}"
+                  style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
+                <input type="number" id="buy-amount-{{ car.id }}" value="10" min="1" max="1000" style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
+                           background:#0a3d62; color:#fff; font-size:13px;">
+                <button onclick="buyStake({{ car.id }})" id="buy-btn-{{ car.id }}" style="padding:7px 16px; background:#6c63ff; color:white; border:none;
+                           border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"
+                  onmouseover="this.style.background='#a29bfe'" onmouseout="this.style.background='#6c63ff'">
+                  Buy Stake
+                </button>
+              </div>
+              <p id="buy-msg-{{ car.id }}" style="margin-top:8px; font-size:12px; min-height:16px;"></p>
             </div>
-
-            <!-- ❤️ Wishlist -->
-            <div class="like-btn">
-              <i class="heart-icon">&#9825;</i>
-            </div>
-
-            <!-- ✅ NEW: DELETE BUTTON (ONLY OWNER) -->
-            {% if session['email'] == car.email %}
-            <button class="delete-btn" data-id="{{ car.id }}">Delete</button>
-            {% endif %}
           </div>
-          {% endfor %}
+
+          <!-- ❤️ Wishlist -->
+          <div class="like-btn">
+            <i class="heart-icon">&#9825;</i>
+          </div>
+
+          <!-- ✅ NEW: DELETE BUTTON (ONLY OWNER) -->
+          {% if session['email'] == car.email %}
+          <button class="delete-btn" data-id="{{ car.id }}">Delete</button>
+          {% endif %}
         </div>
-      </div>
-    </section>
-
-    <section class="Contact" id="contact">
-      <div class="footer">
-        <div class="Main">
-          <div class="list">
-            <h4>Quick Links</h4>
-            <ul>
-              <li><a href="{{ url_for('about') }}">About Us</a></li>
-              <li><a href="{{ url_for('contactUs') }}">Contact Us</a></li>
-              <li>
-                <a href="{{ url_for('sell_car_page') }}">
-                  Sell Your Motorcycle
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="list">
-            <h4>Support</h4>
-            <ul>
-              <li><a href="">carsbay@gmail.com</a></li>
-              <li><a href="">+91 7774831000</a></li>
-              <li>
-                <a href="{{ url_for('book_appointment_page') }}"
-                  >Book an Appointment</a
-                >
-              </li>
-            </ul>
-          </div>
-
-          <div class="list">
-            <h4>Contact Info</h4>
-            <ul>
-              <li><a href="">Dighi, Parande Nagar</a></li>
-              <li><a href="">18.6166° N, 73.8724° E</a></li>
-            </ul>
-          </div>
-
-          <div class="list">
-            <h4>Connect</h4>
-            <div class="social">
-              <a href="https://www.instagram.com/carsbay_01" target="_blank">
-                <i class="bx bxl-instagram"></i>
-              </a>
-
-              <a href="mailto:carsbay@gmail.com">
-                <i class="bx bxl-gmail"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <script src="{{ url_for('static', filename='js/Sportscar.js') }}"></script>
-
-    <script>
-      const TOTAL_SHARES = 1000;
-
-      // Load data on page load for ALL cars
-      document.addEventListener("DOMContentLoaded", function () {
-        {% for car in cars %}
-        fetchShareStatus({{ car.id }});
-        fetchHealthScore({{ car.id }});
         {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="Contact" id="contact">
+    <div class="footer">
+      <div class="Main">
+        <div class="list">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('contactUs') }}">Contact Us</a></li>
+            <li>
+              <a href="{{ url_for('sell_car_page') }}">
+                Sell Your Motorcycle
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="list">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="">carsbay@gmail.com</a></li>
+            <li><a href="">+91 7774831000</a></li>
+            <li>
+              <a href="{{ url_for('book_appointment_page') }}">Book an Appointment</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="list">
+          <h4>Contact Info</h4>
+          <ul>
+            <li><a href="">Dighi, Parande Nagar</a></li>
+            <li><a href="">18.6166° N, 73.8724° E</a></li>
+          </ul>
+        </div>
+
+        <div class="list">
+          <h4>Connect</h4>
+          <div class="social">
+            <a href="https://www.instagram.com/carsbay_01" target="_blank">
+              <i class="bx bxl-instagram"></i>
+            </a>
+
+            <a href="mailto:carsbay@gmail.com">
+              <i class="bx bxl-gmail"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='js/Sportscar.js') }}"></script>
+
+  <script>
+    const TOTAL_SHARES = 1000;
+
+    // Load data on page load for ALL cars
+    document.addEventListener("DOMContentLoaded", function () {
+      {% for car in cars %}
+      fetchShareStatus({{ car.id }});
+    fetchHealthScore({{ car.id }});
+    {% endfor %}
       });
 
-      // ── Fractional Ownership ──────────────────────────────
-      function fetchShareStatus(carId) {
-        fetch(`/api/ownership/status/${carId}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.status === 'success') {
-              const sold = data.total_shares_sold;
-              document.getElementById(`shares-sold-${carId}`).innerText = sold;
-              const pct = Math.min((sold / TOTAL_SHARES) * 100, 100).toFixed(1);
-              document.getElementById(`shares-bar-${carId}`).style.width = pct + '%';
-            } else {
-              document.getElementById(`shares-sold-${carId}`).innerText = 'N/A';
-            }
-          })
-          .catch(() => {
-            document.getElementById(`shares-sold-${carId}`).innerText = 'Offline';
-          });
-      }
+    // ── Fractional Ownership ──────────────────────────────
+    function initializePricing(carId) {
+      const inputEl = document.getElementById(`buy-amount-${carId}`);
+      if (!inputEl) return;
 
-      function buyStake(carId) {
-        const amount = document.getElementById(`buy-amount-${carId}`).value;
-        const msgBox = document.getElementById(`buy-msg-${carId}`);
-        const btn    = document.getElementById(`buy-btn-${carId}`);
+      // Extract raw number from price string (e.g. "2,50,000" -> 250000)
+      const priceStr = inputEl.getAttribute('data-price') || '0';
+      const carTotal = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
 
-        btn.disabled = true;
-        btn.innerText = 'Processing...';
-        msgBox.style.color = '#74b9ff';
-        msgBox.innerText = 'Sending transaction to blockchain...';
+      const pricePerShare = carTotal / TOTAL_SHARES;
 
-        fetch('/api/ownership/buy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ car_id: carId, shares: amount })
+      // Format to Indian currency style if needed, or simple string
+      document.getElementById(`share-price-${carId}`).innerText = pricePerShare.toLocaleString('en-IN');
+
+      // Run initial calculation
+      updateTotalCost(carId);
+    }
+
+    function updateTotalCost(carId) {
+      const inputEl = document.getElementById(`buy-amount-${carId}`);
+      const totalEl = document.getElementById(`total-cost-${carId}`);
+
+      const priceStr = inputEl.getAttribute('data-price') || '0';
+      const carTotal = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
+      const pricePerShare = carTotal / TOTAL_SHARES;
+
+      const sharesToBuy = parseInt(inputEl.value) || 0;
+      const totalCost = sharesToBuy * pricePerShare;
+
+      totalEl.innerText = 'Rs. ' + totalCost.toLocaleString('en-IN');
+    }
+
+    function fetchShareStatus(carId) {
+      // Init pricing when we fetch status
+      initializePricing(carId);
+
+      fetch(`/api/ownership/status/${carId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const sold = data.total_shares_sold;
+            document.getElementById(`shares-sold-${carId}`).innerText = sold;
+            const pct = Math.min((sold / TOTAL_SHARES) * 100, 100).toFixed(1);
+            document.getElementById(`shares-bar-${carId}`).style.width = pct + '%';
+          } else {
+            document.getElementById(`shares-sold-${carId}`).innerText = 'N/A';
+          }
         })
+        .catch(() => {
+          document.getElementById(`shares-sold-${carId}`).innerText = 'Offline';
+        });
+    }
+
+    function buyStake(carId) {
+      const amount = document.getElementById(`buy-amount-${carId}`).value;
+      const msgBox = document.getElementById(`buy-msg-${carId}`);
+      const btn = document.getElementById(`buy-btn-${carId}`);
+
+      btn.disabled = true;
+      btn.innerText = 'Processing...';
+      msgBox.style.color = '#74b9ff';
+      msgBox.innerText = 'Sending transaction to blockchain...';
+
+      fetch('/api/ownership/buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ car_id: carId, shares: amount })
+      })
         .then(res => res.json())
         .then(data => {
           btn.disabled = false;
@@ -331,36 +292,37 @@
           msgBox.style.color = '#ff7675';
           msgBox.innerText = 'Please log in to buy shares.';
         });
-      }
+    }
 
-      // ── AI Health Score ───────────────────────────────────
-      function fetchHealthScore(carId) {
-        fetch(`/api/telemetry/health/${carId}`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.status !== 'success') return;
+    // ── AI Health Score ───────────────────────────────────
+    function fetchHealthScore(carId) {
+      fetch(`/api/telemetry/health/${carId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status !== 'success') return;
 
-            const score = data.health_score;
-            const color = data.color || '#58a6ff';
+          const score = data.health_score;
+          const color = data.color || '#58a6ff';
 
-            const scoreEl = document.getElementById(`health-score-${carId}`);
-            const gradeEl = document.getElementById(`health-grade-${carId}`);
-            const labelEl = document.getElementById(`health-label-${carId}`);
-            const barEl   = document.getElementById(`health-bar-${carId}`);
-            const recEl   = document.getElementById(`health-rec-${carId}`);
+          const scoreEl = document.getElementById(`health-score-${carId}`);
+          const gradeEl = document.getElementById(`health-grade-${carId}`);
+          const labelEl = document.getElementById(`health-label-${carId}`);
+          const barEl = document.getElementById(`health-bar-${carId}`);
+          const recEl = document.getElementById(`health-rec-${carId}`);
 
-            if (scoreEl) { scoreEl.innerText = score; scoreEl.style.color = color; }
-            if (gradeEl) gradeEl.innerText = `Grade ${data.grade}`;
-            if (labelEl) { labelEl.innerText = data.label; labelEl.style.color = color; }
-            if (barEl)   { barEl.style.width = score + '%'; barEl.style.background = color; }
-            if (recEl)   recEl.innerText = data.recommendation;
-          })
-          .catch(() => {
-            const labelEl = document.getElementById(`health-label-${carId}`);
-            if (labelEl) labelEl.innerText = 'Score unavailable';
-          });
-      }
-    </script>
+          if (scoreEl) { scoreEl.innerText = score; scoreEl.style.color = color; }
+          if (gradeEl) gradeEl.innerText = `Grade ${data.grade}`;
+          if (labelEl) { labelEl.innerText = data.label; labelEl.style.color = color; }
+          if (barEl) { barEl.style.width = score + '%'; barEl.style.background = color; }
+          if (recEl) recEl.innerText = data.recommendation;
+        })
+        .catch(() => {
+          const labelEl = document.getElementById(`health-label-${carId}`);
+          if (labelEl) labelEl.innerText = 'Score unavailable';
+        });
+    }
+  </script>
 
-  </body>
+</body>
+
 </html>

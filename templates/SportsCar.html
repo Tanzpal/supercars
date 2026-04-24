@@ -105,20 +105,23 @@
                       border-radius: 10px;
                     ">Blockchain Verified</span>
               </div>
-              <p style="margin:4px 0; font-size:13px;">
-                Shares Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong>
-                &nbsp;/&nbsp; 100 Total
-              </p>
+              <div style="display:flex; justify-content:space-between; margin:4px 0; font-size:13px;">
+                <span>Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong> / 1000</span>
+                <span style="color:#c9d1d9;">1 Share = Rs. <strong id="share-price-{{ car.id }}" style="color:#a29bfe;">--</strong></span>
+              </div>
               <div style="background:#0a3d62; border-radius:6px; height:6px; margin:8px 0;">
-                <div id="shares-bar-{{ car.id }}"
-                  style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
+                <div id="shares-bar-{{ car.id }}" style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
               </div>
               <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
-                <input type="number" id="buy-amount-{{ car.id }}" value="10" min="1" max="1000" style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
-                           background:#0a3d62; color:#fff; font-size:13px;">
-                <button onclick="buyStake({{ car.id }})" id="buy-btn-{{ car.id }}" style="padding:7px 16px; background:#6c63ff; color:white; border:none;
-                           border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"
-                  onmouseover="this.style.background='#a29bfe'" onmouseout="this.style.background='#6c63ff'">
+                <input type="number" id="buy-amount-{{ car.id }}" value="10" min="1" max="1000"
+                  data-price="{{ car.price }}" oninput="updateTotalCost({{ car.id }})"
+                  style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
+                         background:#0a3d62; color:#fff; font-size:13px;">
+                <button onclick="buyStake({{ car.id }})" id="buy-btn-{{ car.id }}"
+                  style="padding:7px 16px; background:#6c63ff; color:white; border:none;
+                         border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"
+                  onmouseover="this.style.background='#a29bfe'"
+                  onmouseout="this.style.background='#6c63ff'">
                   Buy Stake
                 </button>
               </div>

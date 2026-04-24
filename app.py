@@ -566,7 +566,7 @@ def dashboard():
     # User's fractional ownership stakes
     cur.execute("""
         SELECT o.id, o.shares, o.created_at,
-               r.name as car_name, r.plate, r.car_image, r.blockchain_id,
+               r.car_name, r.image, r.blockchain_id,
                (SELECT IFNULL(SUM(shares),0) FROM ownership WHERE vehicle_id = o.vehicle_id) as total_shares_sold
         FROM ownership o
         JOIN resale_cars r ON o.vehicle_id = r.id

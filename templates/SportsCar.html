@@ -72,7 +72,7 @@
                 </div>
                 <p style="margin:4px 0; font-size:13px;">
                   Shares Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong>
-                  &nbsp;/&nbsp; 1000 Total
+                  &nbsp;/&nbsp; 100 Total
                 </p>
                 <div style="background:#0a3d62; border-radius:6px; height:6px; margin:8px 0;">
                   <div id="shares-bar-{{ car.id }}" style="background:#6c63ff; height:6px; border-radius:6px; width:0%; transition:width 0.5s;"></div>
@@ -161,9 +161,11 @@
     <script>
       const TOTAL_SHARES = 1000;
 
-      // Load share data on page load
+      // Load share data on page load for ALL cars
       document.addEventListener("DOMContentLoaded", function () {
-        fetchShareStatus(1);
+        {% for car in cars %}
+        fetchShareStatus({{ car.id }});
+        {% endfor %}
       });
 
       function fetchShareStatus(carId) {

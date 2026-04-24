@@ -321,14 +321,6 @@ header.sticky {
   margin-bottom: 10px;
 }
 
-.appointment-details p {
-  margin: 6px 0;
-  font-size: 0.95rem;
-  color: #444;
-  display: flex;
-  justify-content: space-between;
-}
-
 .appointment-details strong {
   color: #222;
 }
@@ -337,7 +329,8 @@ header.sticky {
   text-align: center;
   font-size: 1.1rem;
   color: #777;
-  margin-top: 30px;
+  /* margin-top: 30px; */
+  float: left;
 }
 
 /* Appointment Cards */
@@ -394,15 +387,10 @@ header.sticky {
   color: #444;
 }
 
-.app-txt {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #777;
-  margin-top: 30px;
-}
-
 .heading-yourcar {
-  margin-bottom: 30px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
 }
 
 /* Card Container */
@@ -488,4 +476,57 @@ header.sticky {
 
 .delete-car-btn:hover {
   background: #e60000;
+}
+
+/* ============================= */
+/* UNIFIED SECTION STYLING FIX */
+/* ============================= */
+
+/* All sections same layout */
+.section {
+  flex: 1;
+  background-color: #f7f8fb;
+  padding: 20px;
+  border-radius: 8px;
+  min-height: calc(100vh - 81px);
+  margin: 0 20px;
+}
+
+/* Same heading style */
+.section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+/* Same paragraph style */
+.section p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Remove extra spacing differences */
+.wishlist-container,
+.appointments-container,
+.yourcar-container {
+  margin: 0;
+  padding: 20px;
+}
+
+/* Fix appointments title (override old style) */
+.appointments-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+/* Fix yourcar heading */
+.heading-yourcar {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
 }

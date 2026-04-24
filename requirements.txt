@@ -4,3 +4,7 @@ Flask-Mail==0.9.1
 itsdangerous==2.1.2
 web3==6.11.1
 py-solc-x==2.0.3
+scikit-learn==1.4.2
+pandas==2.2.2
+numpy==1.26.4
+joblib==1.4.2

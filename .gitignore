@@ -13,6 +13,12 @@ secrets.json
 # Deployed contract address — regenerate via deploy_contract.py
 blockchain/contract_address.txt
 
+# ============================================================
+# AI MODEL ARTIFACTS — regenerated on first run
+# ============================================================
+ai/health_model.joblib
+ai/health_scaler.joblib
+
 # Ganache keystore / wallet files
 *.keystore
 *.wallet

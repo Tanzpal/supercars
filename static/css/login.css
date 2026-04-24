@@ -20,7 +20,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: url(../photos/LoginMainBG.jpg);
+  background: url(../photos/login-bg.jpg);
   padding: 30px;
   background-size: cover;
   background-position: center;

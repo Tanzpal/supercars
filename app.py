@@ -375,17 +375,26 @@ CarsBay Support Team
 # ------------------------------------------------------------
 # 13. BOOK APPOINTMENT
 # ------------------------------------------------------------
+# app.py (Flask route)
 @app.route('/book-appointment', methods=['GET', 'POST'])
 def book_appointment_page():
     if 'email' not in session:
         flash("Please log in to book an appointment.", "danger")
         return redirect(url_for('show_login'))
 
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # Fetch cars (id + name)
+    cursor.execute("SELECT DISTINCT id, car_name FROM resale_cars ORDER BY id DESC")
+    cars = cursor.fetchall()
+
     if request.method == 'POST':
-        # Get form data
         name = request.form['name']
         phone = request.form['phone']
-        vehicle = request.form['vehicle']
+
+        # ✅ FIX: now using car_id instead of vehicle name
+        car_id = request.form['vehicle']
+
         date_str = request.form['date']
         time = request.form['time']
         area = request.form['area']
@@ -395,7 +404,6 @@ def book_appointment_page():
         driving_license = request.form['driving_license']
         license_number = request.form.get('license_number')
 
-        # Validate appointment date (min 3 days later)
         appointment_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         min_date = (datetime.today() + timedelta(days=3)).date()
 
@@ -403,27 +411,22 @@ def book_appointment_page():
             flash(f"You can book appointments from {min_date} onwards.", "danger")
             return redirect(url_for('book_appointment_page'))
 
-        # Insert appointment
-        cursor = mysql.connection.cursor()
-        query = """
+        # Insert into DB (FIXED COLUMN: car_id)
+        cursor.execute("""
             INSERT INTO appointments 
-            (user_email, name, phone, vehicle, date, time, area, city, state, post_code, driving_license, license_number)
+            (user_email, name, phone, car_id, date, time, area, city, state, post_code, driving_license, license_number)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        cursor.execute(query, (
-            session['email'], name, phone, vehicle, date_str, time, area, city, state,
-            post_code, driving_license, license_number
+        """, (
+            session['email'], name, phone, car_id, date_str, time,
+            area, city, state, post_code, driving_license, license_number
         ))
-        mysql.connection.commit()
-        cursor.close()
 
-        # ----------------------------------------------------
-        # SEND EMAIL CONFIRMATION FOR APPOINTMENT
-        # ----------------------------------------------------
+        mysql.connection.commit()
+
+        # Email
         try:
-            subject = "Appointment Confirmation – CarsBay"
             msg = Message(
-                subject,
+                "Appointment Confirmation – CarsBay",
                 sender="carsbay@gmail.com",
                 recipients=[session['email']]
             )
@@ -431,36 +434,27 @@ def book_appointment_page():
             msg.body = f"""
 Dear {name},
 
-Your appointment has been successfully booked with CarsBay.
+Your appointment has been successfully booked.
 
-Below are your appointment details:
-
-• Vehicle: {vehicle}
-• Date: {date_str}
-• Time: {time}
-• Area: {area}
-• City: {city}, {state} – {post_code}
-• Driving License: {driving_license}
-• License Number: {license_number}
-
-Our team will contact you if any further information is needed before your test ride.
+Vehicle ID: {car_id}
+Date: {date_str}
+Time: {time}
+Location: {area}, {city}, {state} - {post_code}
 
 Thank you for choosing CarsBay!
-
-Warm Regards,
-CarsBay Team
 """
-
             mail.send(msg)
 
         except Exception as email_error:
             print("Email Error:", email_error)
-            flash("Appointment booked, but the confirmation email could not be sent.", "warning")
+            flash("Booked, but email failed.", "warning")
 
+        cursor.close()
         flash("Appointment booked successfully!", "success")
         return redirect(url_for('dashboard'))
 
-    return render_template('BookAppointment.html')
+    cursor.close()
+    return render_template('BookAppointment.html', cars=cars)
 
 
 
@@ -557,10 +551,11 @@ def dashboard():
     wishlist_items = cur.fetchall()
 
     # Appointments
-    cur.execute(
-        "SELECT id, vehicle, date, time, area, city FROM appointments WHERE user_email=%s",
-        (session['email'],)
-    )
+    cur.execute("""
+    SELECT a.*, r.car_name
+    FROM appointments a
+    JOIN resale_cars r ON a.car_id = r.id
+""")
     appointments = cur.fetchall()
 
     # User's fractional ownership stakes

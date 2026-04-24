@@ -51,28 +51,16 @@
           </div>
 
           <!-- Vehicle -->
-          <div class="formbold-mb-5">
-            <label class="formbold-form-label">Preferred Vehicle Model</label>
-            <select name="vehicle" class="formbold-form-input" required>
-              <option value="" disabled selected>
-                Select your preferred car
-              </option>
-              <option value="Aprillia RSV4">Aprillia RSV4</option>
-              <option value="BMW S1000RR">BMW S1000RR</option>
-              <option value="Apache RR310">Apache RR310</option>
-              <option value="Yamaha MT-07">Yamaha MT-07</option>
-              <option value="Ducati 916">Ducati 916</option>
-              <option value="KTM RC.8e">KTM RC.8e</option>
-              <option value="Kawasaki">Kawasaki</option>
-              <option value="Hayabusa">Hayabusa</option>
-              <option value="Benelli">Benelli</option>
-              <option value="Royal Enfield Himalayan">
-                Royal Enfield Himalayan
-              </option>
-              <option value="Triumph">Triumph</option>
-              <option value="KTM 390 Adventure">KTM 390 Adventure</option>
-            </select>
-          </div>
+          <select name="vehicle" class="formbold-form-input" required>
+            <option value="" disabled selected>
+              Select your preferred car
+            </option>
+
+            {% for car in cars %}
+            <!-- IMPORTANT: value = car.id (NOT car_name) -->
+            <option value="{{ car.id }}">{{ car.car_name }}</option>
+            {% endfor %}
+          </select>
 
           <!-- Date & Time -->
           <div class="flex formbold--mx-3">

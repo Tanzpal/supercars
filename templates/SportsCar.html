@@ -97,13 +97,20 @@
                 <h4 style="margin: 0; font-size: 14px; color: #a29bfe">
                   Fractional Ownership
                 </h4>
-                <span style="
+                <a href="/passport/{{ car.id }}" style="
                       font-size: 11px;
                       color: #74b9ff;
                       background: #0a3d62;
                       padding: 2px 8px;
                       border-radius: 10px;
-                    ">Blockchain Verified</span>
+                      text-decoration: none;
+                      border: 1px solid #74b9ff;
+                      transition: all 0.3s;
+                    "
+                    onmouseover="this.style.background='#74b9ff'; this.style.color='#0a3d62'"
+                    onmouseout="this.style.background='#0a3d62'; this.style.color='#74b9ff'">
+                  Blockchain Verified &nearr;
+                </a>
               </div>
               <div style="display:flex; justify-content:space-between; margin:4px 0; font-size:13px;">
                 <span>Sold: <strong id="shares-sold-{{ car.id }}" style="color:#55efc4;">Loading...</strong> / 1000</span>
@@ -114,10 +121,10 @@
               </div>
               <div style="display:flex; gap:8px; align-items:center; margin-top:10px;">
                 <input type="number" id="buy-amount-{{ car.id }}" value="10" min="1" max="1000"
-                  data-price="{{ car.price }}" oninput="updateTotalCost({{ car.id }})"
+                  data-price="{{ car.price }}" oninput="updateTotalCost(this.closest('.blog-card').dataset.id)"
                   style="width:65px; padding:6px; border-radius:6px; border:1px solid #6c63ff;
                          background:#0a3d62; color:#fff; font-size:13px;">
-                <button onclick="buyStake({{ car.id }})" id="buy-btn-{{ car.id }}"
+                <button onclick="buyStake(this.closest('.blog-card').dataset.id)" id="buy-btn-{{ car.id }}"
                   style="padding:7px 16px; background:#6c63ff; color:white; border:none;
                          border-radius:6px; cursor:pointer; font-size:13px; font-weight:600;"
                   onmouseover="this.style.background='#a29bfe'"
@@ -202,11 +209,15 @@
 
     // Load data on page load for ALL cars
     document.addEventListener("DOMContentLoaded", function () {
-      {% for car in cars %}
-      fetchShareStatus({{ car.id }});
-    fetchHealthScore({{ car.id }});
-    {% endfor %}
+      const cards = document.querySelectorAll(".blog-card");
+      cards.forEach(card => {
+        const carId = card.getAttribute("data-id");
+        if (carId) {
+          fetchShareStatus(carId);
+          fetchHealthScore(carId);
+        }
       });
+    });
 
     // ── Fractional Ownership ──────────────────────────────
     function initializePricing(carId) {

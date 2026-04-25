@@ -242,7 +242,7 @@ def verify_car(car_id):
     # Email to seller
     msg = Message(
         "Your Car Has Been Verified!",
-        sender="carsbay@gmail.com",
+        sender="bikesbay@gmail.com",
         recipients=[seller_email]
     )
     msg.body = f"""
@@ -343,7 +343,7 @@ def contactUs():
             subject = "We Received Your Query - CarsBay"
             msg = Message(
                 subject,
-                sender="carsbay@gmail.com",
+                sender="bikesbay@gmail.com",
                 recipients=[email]
             )
             msg.body = f"""
@@ -428,7 +428,7 @@ def book_appointment_page():
         try:
             msg = Message(
                 "Appointment Confirmation – CarsBay",
-                sender="carsbay@gmail.com",
+                sender="bikesbay@gmail.com",
                 recipients=[session['email']]
             )
 

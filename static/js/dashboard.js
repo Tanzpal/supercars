@@ -138,3 +138,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const deleteButtons = document.querySelectorAll(".delete-car-btn");
+
+  deleteButtons.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const carId = this.getAttribute("data-id");
+
+      if (!confirm("Are you sure you want to delete this car?")) return;
+
+      fetch(`/delete_car/${carId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.status === "success") {
+            // ✅ Remove card from UI
+            this.closest(".yourcar-card").remove();
+          } else {
+            alert(data.message);
+          }
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+          alert("Something went wrong!");
+        });
+    });
+  });
+});

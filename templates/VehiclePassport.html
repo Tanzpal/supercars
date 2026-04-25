@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Passport - {{ car.car_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+      body {
+        background-color: #0d1117;
+        color: #c9d1d9;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .passport-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+      .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #30363d;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+      }
+      .header-section h1 {
+        color: #58a6ff;
+        margin: 0;
+      }
+      .badge-verified {
+        background: rgba(85, 239, 196, 0.1);
+        color: #55efc4;
+        border: 1px solid #55efc4;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .card {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 24px;
+      }
+      .card h3 {
+        margin-top: 0;
+        color: #8b949e;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid #30363d;
+        padding-bottom: 12px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 12px 0;
+        font-size: 14px;
+      }
+      .info-row span:first-child {
+        color: #8b949e;
+      }
+      .info-row span:last-child {
+        font-weight: 600;
+        color: #c9d1d9;
+      }
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .history-table th, .history-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #30363d;
+        font-size: 14px;
+      }
+      .history-table th {
+        color: #8b949e;
+        font-weight: 600;
+      }
+      .history-table tr:hover {
+        background: #21262d;
+      }
+      .ai-score-box {
+        text-align: center;
+        padding: 20px 0;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #58a6ff;
+        text-decoration: none;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      .hash-text {
+        font-family: monospace;
+        color: #a29bfe;
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar placeholder (if needed, or just back link) -->
+    <div style="padding: 20px; border-bottom: 1px solid #30363d; background: #161b22;">
+        <a href="{{ url_for('sportscar') }}" class="back-link"><i class='bx bx-arrow-back'></i> Back to Marketplace</a>
+    </div>
+
+    <div class="passport-container">
+      <div class="header-section">
+        <div>
+          <h1>{{ car.brand }} {{ car.car_name }}</h1>
+          <p style="color: #8b949e; margin: 5px 0 0;">Vehicle Passport & Immutable History</p>
+        </div>
+        <div class="badge-verified">
+          <i class='bx bx-check-shield' ></i> Blockchain Verified
+        </div>
+      </div>
+
+      <div class="grid-layout">
+        <!-- Blockchain Identity -->
+        <div class="card">
+          <h3><i class='bx bx-cube-alt'></i> Digital Identity</h3>
+          <div class="info-row">
+            <span>Blockchain ID</span>
+            <span>#{{ car.blockchain_id }}</span>
+          </div>
+          <div class="info-row">
+            <span>VIN / Chassis (Hash)</span>
+            <span class="hash-text">{{ car.plate | string | urlencode | truncate(16, True, '') }}0x...</span>
+          </div>
+          <div class="info-row">
+            <span>Total Value</span>
+            <span>Rs. {{ car.price }}</span>
+          </div>
+          <div class="info-row">
+            <span>Shares Minted</span>
+            <span>1,000 (100%)</span>
+          </div>
+          <div class="info-row">
+            <span>Shares Sold</span>
+            <span style="color:#55efc4;">{{ total_shares }} / 1000</span>
+          </div>
+        </div>
+
+        <!-- AI Health Status -->
+        <div class="card" id="ai-health-card">
+          <h3><i class='bx bx-pulse'></i> Real-Time AI Telemetry</h3>
+          <div class="ai-score-box">
+            <div id="ai-loading">Fetching live diagnostics...</div>
+            <div id="ai-content" style="display:none;">
+                <div id="ai-score" style="font-size: 48px; font-weight: 700;">--</div>
+                <div style="font-size: 14px; color: #8b949e; margin-bottom: 10px;">Overall Health Score</div>
+                <div id="ai-grade" style="display:inline-block; padding:4px 12px; border-radius:20px; font-size:14px; font-weight:600; margin-bottom:15px;"></div>
+                <p id="ai-rec" style="font-size: 13px; color: #c9d1d9; margin:0; line-height:1.5;"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ownership History -->
+      <div class="card" style="margin-top: 20px;">
+        <h3><i class='bx bx-history'></i> Immutable Ownership Ledger</h3>
+        {% if history %}
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Investor</th>
+              <th>Action</th>
+              <th>Shares</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for record in history %}
+            <tr>
+              <td>{{ record.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>{{ record.username[:4] }}***</td>
+              <td><span style="color:#74b9ff;">Acquired</span></td>
+              <td>{{ record.shares }} ({{ "%.1f"|format((record.shares / 1000) * 100) }}%)</td>
+              <td><span style="color:#55efc4;"><i class='bx bx-check'></i> Confirmed</span></td>
+            </tr>
+            {% endfor %}
+            <!-- Initial Genesis block record -->
+            <tr>
+                <td>{{ car.created_at.strftime('%Y-%m-%d %H:%M') if car.created_at else 'Genesis' }}</td>
+                <td>System</td>
+                <td><span style="color:#a29bfe;">Minted Asset</span></td>
+                <td>1000 (100%)</td>
+                <td><span style="color:#55efc4;"><i class='bx bx-check'></i> Confirmed</span></td>
+            </tr>
+          </tbody>
+        </table>
+        {% else %}
+        <p style="color: #8b949e; text-align: center; padding: 20px 0;">No fractional transactions recorded yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+        // Fetch AI score on load
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch(`/api/telemetry/health/{{ car.id }}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('ai-loading').style.display = 'none';
+                    if (data.status === 'success') {
+                        document.getElementById('ai-content').style.display = 'block';
+                        
+                        const scoreEl = document.getElementById('ai-score');
+                        scoreEl.innerText = data.health_score;
+                        scoreEl.style.color = data.color;
+
+                        const gradeEl = document.getElementById('ai-grade');
+                        gradeEl.innerText = `Grade ${data.grade} - ${data.label}`;
+                        gradeEl.style.backgroundColor = `${data.color}22`; // 22 is hex opacity
+                        gradeEl.style.color = data.color;
+                        gradeEl.style.border = `1px solid ${data.color}`;
+
+                        const recEl = document.getElementById('ai-rec');
+                        recEl.innerText = data.recommendation;
+                    } else {
+                        document.getElementById('ai-loading').style.display = 'block';
+                        document.getElementById('ai-loading').innerText = 'Diagnostics unavailable';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('ai-loading').innerText = 'Connection error';
+                });
+        });
+    </script>
+  </body>
+</html>

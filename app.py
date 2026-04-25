@@ -814,7 +814,50 @@ def api_ownership_buy():
 
 
 # ------------------------------------------------------------
-# 22. AI TELEMETRY — HEALTH SCORE API
+# 22. VEHICLE PASSPORT UI
+# ------------------------------------------------------------
+@app.route('/passport/<int:car_id>', methods=['GET'])
+def vehicle_passport(car_id):
+    """
+    Renders the Detailed Vehicle Passport page.
+    Displays immutable history, blockchain status, and AI health data.
+    """
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
+    # Get car details
+    cur.execute("SELECT * FROM resale_cars WHERE id=%s", (car_id,))
+    car = cur.fetchone()
+    
+    if not car:
+        flash("Car not found for passport view.", "danger")
+        return redirect(url_for('sportscar'))
+
+    # Get ownership history
+    cur.execute("""
+        SELECT o.shares, o.created_at, u.username
+        FROM ownership o
+        JOIN registrations u ON o.user_id = u.id
+        WHERE o.vehicle_id = %s
+        ORDER BY o.created_at DESC
+    """, (car_id,))
+    history = cur.fetchall()
+    
+    # Get total shares sold from DB
+    cur.execute("SELECT IFNULL(SUM(shares), 0) as total_shares FROM ownership WHERE vehicle_id=%s", (car_id,))
+    db_result = cur.fetchone()
+    total_db_shares = int(db_result['total_shares']) if db_result and db_result['total_shares'] else 0
+    
+    cur.close()
+
+    return render_template(
+        'VehiclePassport.html', 
+        car=car, 
+        history=history,
+        total_shares=total_db_shares
+    )
+
+# ------------------------------------------------------------
+# 23. AI TELEMETRY — HEALTH SCORE API
 # ------------------------------------------------------------
 @app.route('/api/telemetry/health', methods=['POST'])
 def api_telemetry_health():
